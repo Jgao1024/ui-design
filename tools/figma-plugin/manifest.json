@@ -1,0 +1,16 @@
+{
+  "name": "UI Kit Puller 27",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": [
+    "figma"
+  ],
+  "documentAccess": "dynamic-page",
+  "networkAccess": {
+    "allowedDomains": [
+      "*"
+    ],
+    "reasoning": "Posting exported SVG batches to a helper server on localhost (127.0.0.1:8917). Wildcard is used because Figma's validator rejects host:port entries."
+  }
+}

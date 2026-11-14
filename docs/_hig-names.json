@@ -1,0 +1,82 @@
+{
+ "content": [
+  "Charts",
+  "Image views",
+  "Text views",
+  "Web views"
+ ],
+ "layout-and-organization": [
+  "Boxes",
+  "Collections",
+  "Column views",
+  "Disclosure controls",
+  "Labels",
+  "Lists and tables",
+  "Lockups",
+  "Outline views",
+  "Split views",
+  "Tab views"
+ ],
+ "menus-and-actions": [
+  "Activity views",
+  "Buttons",
+  "Context menus",
+  "Dock menus",
+  "Edit menus",
+  "Home Screen quick actions",
+  "Menus",
+  "Ornaments",
+  "Pop-up buttons",
+  "Pull-down buttons",
+  "The menu bar",
+  "Toolbars"
+ ],
+ "navigation-and-search": [
+  "Path controls",
+  "Search fields",
+  "Sidebars",
+  "Tab bars",
+  "Token fields"
+ ],
+ "presentation": [
+  "Action sheets",
+  "Alerts",
+  "Page controls",
+  "Panels",
+  "Popovers",
+  "Scroll views",
+  "Sheets",
+  "Windows"
+ ],
+ "selection-and-input": [
+  "Color wells",
+  "Combo boxes",
+  "Digit entry views",
+  "Image wells",
+  "Pickers",
+  "Segmented controls",
+  "Sliders",
+  "Steppers",
+  "Text fields",
+  "Toggles",
+  "Virtual keyboards"
+ ],
+ "status": [
+  "Activity rings",
+  "Gauges",
+  "Progress indicators",
+  "Rating indicators"
+ ],
+ "system-experiences": [
+  "App Shortcuts",
+  "Complications",
+  "Controls",
+  "Live Activities",
+  "Notifications",
+  "Snippets",
+  "Status bars",
+  "Top Shelf",
+  "Watch faces",
+  "Widgets"
+ ]
+}

@@ -1,0 +1,13 @@
+reference/
+.figma.env
+__pycache__/
+.DS_Store
+node_modules/
+dist/
+apps/*/public/data/
+apps/*/public/svg/
+native/*/build/
+native/*/*.xcodeproj/
+native/*/*/Resources/registry.json
+xcuserdata/
+*.xcuserstate

@@ -1,0 +1,19 @@
+{
+  "name": "ui-design",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "data:macos": "python3 apps/macos/scripts/build-data.py",
+    "data:ios": "python3 apps/ios/scripts/build-data.py",
+    "dev:macos": "vite apps/macos --port 5173",
+    "dev:ios": "vite apps/ios --port 5174",
+    "build:macos": "vite build apps/macos",
+    "build:ios": "vite build apps/ios",
+    "typecheck:macos": "tsc --noEmit -p apps/macos",
+    "typecheck:ios": "tsc --noEmit -p apps/ios"
+  },
+  "devDependencies": {
+    "typescript": "^7.0.2",
+    "vite": "^8.3.8"
+  }
+}

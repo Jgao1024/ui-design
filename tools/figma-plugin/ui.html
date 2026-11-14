@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<style>
+  :root {
+    --fg: var(--figma-color-text, #1a1a1a);
+    --muted: var(--figma-color-text-secondary, #6b6b6b);
+    --bg: var(--figma-color-bg, #fff);
+    --line: var(--figma-color-border, #e3e3e3);
+    --accent: var(--figma-color-bg-brand, #0d99ff);
+    --ok: #1a9f53; --warn: #c47f00; --err: #d92d20;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; padding: 14px 16px 16px; font: 12px/1.5 -apple-system, "SF Pro Text", "PingFang SC", sans-serif;
+         color: var(--fg); background: var(--bg); display: flex; flex-direction: column; height: 100vh; }
+  h1 { font-size: 13px; margin: 0 0 2px; font-weight: 600; }
+  .sub { color: var(--muted); margin: 0 0 10px; }
+  .row { display: flex; gap: 8px; margin-bottom: 10px; }
+  button { font: inherit; font-weight: 600; padding: 7px 14px; border-radius: 6px; border: 1px solid var(--line);
+           background: transparent; color: var(--fg); cursor: pointer; }
+  button.primary { background: var(--accent); border-color: transparent; color: #fff; flex: 1; }
+  button:disabled { opacity: .45; cursor: default; }
+  .bar { height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; margin-bottom: 8px; }
+  .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width .2s; }
+  .stat { display: flex; justify-content: space-between; color: var(--muted); margin-bottom: 8px; }
+  .stat b { color: var(--fg); font-weight: 600; }
+  #log { flex: 1; overflow-y: auto; border: 1px solid var(--line); border-radius: 6px; padding: 8px 10px;
+         font: 11px/1.6 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap;
+         word-break: break-word; background: rgba(0,0,0,.02); }
+  #log .ok { color: var(--ok); } #log .warn { color: var(--warn); } #log .error { color: var(--err); }
+</style>
+</head>
+<body>
+  <h1>UI Design Kit Puller</h1>
+  <p class="sub" id="sub">点 Start All，把当前文件所有组件导出成 SVG 并送到本机接收器。</p>
+
+  <div class="row">
+    <button class="primary" id="go">Start All</button>
+    <button id="stop" disabled>Stop</button>
+    <button id="again" title="忽略续传，把全部组件重新导出一遍（缺的会被补齐）">全部重跑</button>
+  </div>
+  <div class="bar"><i id="fill"></i></div>
+  <div class="stat">
+    <span><b id="done">0</b> / <span id="total">0</span> 个</span>
+    <span id="pct">0%</span>
+  </div>
+  <div id="log"></div>
+
+<script>
+  var ENDPOINT = 'http://127.0.0.1:8917';
+  var go = document.getElementById('go'), stop = document.getElementById('stop');
+  var again = document.getElementById('again');
+  var fill = document.getElementById('fill'), doneEl = document.getElementById('done');
+  var totalEl = document.getElementById('total'), pctEl = document.getElementById('pct');
+  var logEl = document.getElementById('log'), sub = document.getElementById('sub');
+  var sent = 0;
+
+  function post(msg) { parent.postMessage({ pluginMessage: msg }, '*'); }
+  function log(text, kind) {
+    var d = document.createElement('div');
+    if (kind) d.className = kind;
+    d.textContent = text;
+    logEl.appendChild(d);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+  function setProgress(done, total, failed, emitted) {
+    var pct = total ? Math.round((done / total) * 100) : 0;
+    fill.style.width = pct + '%';
+    doneEl.textContent = done; totalEl.textContent = total;
+    pctEl.textContent = pct + '%'
+      + (emitted ? ' · 写出 ' + emitted : '')
+      + (failed ? ' · 失败 ' + failed : '');
+  }
+
+  // fetch with a hard timeout, so a stalled request can never freeze the plugin
+  function req(url, opts, ms) {
+    var ctl = new AbortController();
+    var t = setTimeout(function () { ctl.abort(); }, ms || 15000);
+    opts = opts || {};
+    opts.signal = ctl.signal;
+    return fetch(url, opts).finally(function () { clearTimeout(t); });
+  }
+
+  function postBatch(items, attempt, body) {
+    attempt = attempt || 1;
+    // stringify once and reuse across retries — re-stringifying doubles memory per attempt
+    body = body || JSON.stringify({ kit: window.__kit || 'ios27', items: items });
+    req(ENDPOINT + '/batch', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body
+    }, 20000)
+      .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (res) {
+        sent += res.added || 0;
+        post({ type: 'ack' });
+      })
+      .catch(function (e) {
+        if (attempt < 3) {
+          log('批次失败（第 ' + attempt + ' 次）：' + e + '，重试…', 'warn');
+          setTimeout(function () { postBatch(items, attempt + 1, body); }, 600 * attempt);
+          return;
+        }
+        log('批次失败：' + e + ' —— 已停止。重跑会跳过已写入的。', 'error');
+        post({ type: 'nack', text: String(e) });
+        go.disabled = false; stop.disabled = true;
+      });
+  }
+
+  function kick(mode) {
+    go.disabled = true; again.disabled = true; stop.disabled = false;
+    logEl.innerHTML = ''; sent = 0;
+    log('连接接收器 ' + ENDPOINT + ' …');
+    req(ENDPOINT + '/status', {}, 8000)
+      .then(function (r) { return r.json(); })
+      .then(function () {
+        log('接收器在线，开始扫描组件' + (mode === 'restart' ? '（全部重跑）' : ''), 'ok');
+        post({ type: mode });
+      })
+      .catch(function (e) {
+        log('连不上接收器：' + e, 'error');
+        log('先在终端跑：python3 tools/figma-pull/receiver.py', 'error');
+        go.disabled = false; again.disabled = false; stop.disabled = true;
+      });
+  }
+
+  go.addEventListener('click', function () { kick('start'); });
+  again.addEventListener('click', function () { kick('restart'); });
+
+  stop.addEventListener('click', function () {
+    stop.disabled = true;
+    log('收到停止请求，正在收尾…', 'warn');
+    post({ type: 'cancel' });
+  });
+
+  window.onmessage = function (ev) {
+    var msg = ev.data && ev.data.pluginMessage;
+    if (!msg || !msg.type) return;
+
+    if (msg.type === 'started') {
+      window.__kit = msg.kit;
+      sub.textContent = msg.file + ' → reference/' + msg.kit + '/svg/';
+      setProgress(0, msg.total, 0);
+      return;
+    }
+    if (msg.type === 'need-nodes') {
+      window.__kit = msg.kit;
+      log('向接收器要主组件清单…');
+      req(ENDPOINT + '/nodes?kit=' + encodeURIComponent(msg.kit), {}, 25000)
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          var nodes = res.nodes || [];
+          log('清单拿到 ' + nodes.length + ' 个主组件', nodes.length ? 'ok' : 'error');
+          post({ type: 'nodes', nodes: nodes });
+        })
+        .catch(function (e) {
+          log('取清单失败：' + e + ' —— 确认接收器是新版（/nodes 接口）', 'error');
+          post({ type: 'nodes', nodes: [] });
+        });
+      return;
+    }
+    if (msg.type === 'need-done') {
+      window.__kit = msg.kit;
+      req(ENDPOINT + '/status?kit=' + encodeURIComponent(msg.kit), {}, 8000)
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          var ids = res.ids || [];
+          if (ids.length) log('接收器已有 ' + ids.length + ' 个，会跳过', 'ok');
+          post({ type: 'done-ids', ids: ids });
+        })
+        .catch(function () { post({ type: 'done-ids', ids: [] }); });
+      return;
+    }
+    if (msg.type === 'progress') { setProgress(msg.done, msg.total, msg.failed, msg.emitted); return; }
+    if (msg.type === 'log') { log(msg.text, msg.kind); return; }
+    if (msg.type === 'failure') {
+      fetch(ENDPOINT + '/failure', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(msg.item)
+      }).catch(function () {});
+      return;
+    }
+    if (msg.type === 'chunk') {
+      var items = msg.items;
+      postBatch(items);
+      items = null;                    // no lingering reference after the call
+      return;
+    }
+    if (msg.type === 'aborted') {
+      go.disabled = false; stop.disabled = true;
+      log('已中止，可重跑续传', 'warn');
+      return;
+    }
+    if (msg.type === 'finished') {
+      go.disabled = false; stop.disabled = true;
+      req(ENDPOINT + '/done', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ kits: [msg.kit] })
+      }, 20000)
+        .then(function (r) { return r.json(); })
+        .then(function (res) {
+          log('本次写入 ' + sent + ' 个 SVG', 'ok');
+          var s = (res.summary || [])[0];
+          if (s) {
+            log('总计 ' + s.count + ' 个，已生成 MANIFEST.json 与 index.md', 'ok');
+            Object.keys(s.buckets).sort().forEach(function (k) { log('  ' + k + ': ' + s.buckets[k]); });
+          }
+        })
+        .catch(function (e) { log('收尾失败：' + e, 'error'); });
+    }
+  };
+
+  log('准备就绪。目标目录：reference/<kit>/svg/');
+</script>
+</body>
+</html>
