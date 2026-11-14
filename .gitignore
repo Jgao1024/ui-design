@@ -16,4 +16,21 @@ design/shots/
 design/.bin/
 design/.deno/
 design/.chrome-tmp/
+design/.ref/
 figma/_backup/
+
+# macOS 应用截图产物（约 190MB，不入库；要入库删掉这行）
+macos-shots/shots/
+macos-shots/structure/
+macos-shots/components/
+macos-shots/_review/
+macos-shots/bin/
+
+# 临时产物（76MB 编译缓存 + 调试截图，不入库）
+.tmp/
+
+# 备份文件一律不入库
+*.bak
+*.orig
+*~
+*.swp
