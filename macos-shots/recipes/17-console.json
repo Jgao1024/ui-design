@@ -1,0 +1,51 @@
+{
+  "num": 17,
+  "slug": "console",
+  "app": "控制台",
+  "bundle": "com.apple.Console",
+  "batch": 4,
+  "steps": [
+    {
+      "name": "01-main",
+      "op": "主窗口默认态",
+      "actions": [
+        {
+          "wait": 0.4
+        }
+      ]
+    },
+    {
+      "name": "02-selection",
+      "op": "选中日志类别",
+      "actions": [
+        {
+          "pressfirst": [
+            "AXRow,AXOutlineRow,AXCell,AXListItem",
+            "边栏"
+          ]
+        },
+        {
+          "wait": 0.8
+        }
+      ]
+    },
+    {
+      "name": "03-search",
+      "op": "搜索日志",
+      "actions": [
+        {
+          "key": "cmd+f"
+        },
+        {
+          "wait": 0.5
+        },
+        {
+          "type": "error"
+        },
+        {
+          "wait": 0.9
+        }
+      ]
+    }
+  ]
+}

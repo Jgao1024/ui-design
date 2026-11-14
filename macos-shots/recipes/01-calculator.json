@@ -1,0 +1,51 @@
+{
+  "num": 1,
+  "slug": "calculator",
+  "app": "计算器",
+  "bundle": "com.apple.calculator",
+  "batch": 1,
+  "steps": [
+    {
+      "name": "01-main",
+      "op": "主窗口默认态",
+      "actions": [
+        {
+          "wait": 0.4
+        }
+      ]
+    },
+    {
+      "name": "02-scientific",
+      "op": "科学模式",
+      "actions": [
+        {
+          "key": "cmd+2"
+        },
+        {
+          "wait": 1.0
+        }
+      ]
+    },
+    {
+      "name": "05-menu",
+      "op": "模式菜单（显示）",
+      "actions": [
+        {
+          "menu": "显示"
+        },
+        {
+          "wait": 0.6
+        }
+      ],
+      "capture": "menu",
+      "cleanup": [
+        {
+          "esc": 1
+        },
+        {
+          "wait": 0.3
+        }
+      ]
+    }
+  ]
+}

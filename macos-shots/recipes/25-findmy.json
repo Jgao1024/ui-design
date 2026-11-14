@@ -1,0 +1,54 @@
+{
+  "num": 25,
+  "slug": "findmy",
+  "app": "查找",
+  "bundle": "com.apple.findmy",
+  "batch": 3,
+  "steps": [
+    {
+      "name": "01-main",
+      "op": "主窗口默认态",
+      "actions": [
+        {
+          "wait": 0.4
+        }
+      ]
+    },
+    {
+      "name": "02-selection",
+      "op": "选中设备",
+      "actions": [
+        {
+          "pressfirst": [
+            "AXRow,AXOutlineRow,AXCell,AXListItem",
+            "边栏"
+          ]
+        },
+        {
+          "wait": 0.8
+        }
+      ]
+    },
+    {
+      "name": "05-menu",
+      "op": "菜单（文件）",
+      "actions": [
+        {
+          "menu": "文件"
+        },
+        {
+          "wait": 0.6
+        }
+      ],
+      "capture": "menu",
+      "cleanup": [
+        {
+          "esc": 1
+        },
+        {
+          "wait": 0.3
+        }
+      ]
+    }
+  ]
+}

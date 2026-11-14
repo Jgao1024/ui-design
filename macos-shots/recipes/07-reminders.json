@@ -1,0 +1,68 @@
+{
+  "num": 7,
+  "slug": "reminders",
+  "app": "提醒事项",
+  "bundle": "com.apple.reminders",
+  "batch": 2,
+  "pre_actions": [
+    {
+      "key": "cmd+n"
+    },
+    {
+      "wait": 0.8
+    },
+    {
+      "type": "sample reminder"
+    },
+    {
+      "key": "return"
+    }
+  ],
+  "steps": [
+    {
+      "name": "01-main",
+      "op": "主窗口默认态",
+      "actions": [
+        {
+          "wait": 0.4
+        }
+      ]
+    },
+    {
+      "name": "02-add",
+      "op": "新增行输入态",
+      "actions": [
+        {
+          "key": "cmd+n"
+        },
+        {
+          "wait": 0.5
+        },
+        {
+          "type": "second item"
+        },
+        {
+          "wait": 0.5
+        }
+      ]
+    },
+    {
+      "name": "03-search",
+      "op": "搜索",
+      "actions": [
+        {
+          "key": "cmd+f"
+        },
+        {
+          "wait": 0.5
+        },
+        {
+          "type": "a"
+        },
+        {
+          "wait": 0.9
+        }
+      ]
+    }
+  ]
+}

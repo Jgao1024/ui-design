@@ -1,0 +1,54 @@
+{
+  "num": 18,
+  "slug": "activity-monitor",
+  "app": "活动监视器",
+  "bundle": "com.apple.ActivityMonitor",
+  "batch": 4,
+  "steps": [
+    {
+      "name": "01-main",
+      "op": "主窗口默认态",
+      "actions": [
+        {
+          "wait": 0.4
+        }
+      ]
+    },
+    {
+      "name": "02-cpu",
+      "op": "CPU 标签",
+      "actions": [
+        {
+          "key": "cmd+2"
+        },
+        {
+          "wait": 1.0
+        }
+      ]
+    },
+    {
+      "name": "03-memory",
+      "op": "内存标签",
+      "actions": [
+        {
+          "key": "cmd+3"
+        },
+        {
+          "wait": 1.0
+        }
+      ]
+    },
+    {
+      "name": "04-energy",
+      "op": "能耗标签",
+      "actions": [
+        {
+          "key": "cmd+4"
+        },
+        {
+          "wait": 1.0
+        }
+      ]
+    }
+  ]
+}

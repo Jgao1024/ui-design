@@ -1,0 +1,68 @@
+{
+  "num": 16,
+  "slug": "terminal",
+  "app": "终端",
+  "bundle": "com.apple.Terminal",
+  "batch": 4,
+  "steps": [
+    {
+      "name": "01-main",
+      "op": "主窗口默认态",
+      "actions": [
+        {
+          "wait": 0.4
+        }
+      ]
+    },
+    {
+      "name": "02-new-window",
+      "op": "新窗口",
+      "actions": [
+        {
+          "key": "cmd+n"
+        },
+        {
+          "wait": 1.3
+        }
+      ]
+    },
+    {
+      "name": "03-command",
+      "op": "执行命令",
+      "actions": [
+        {
+          "type": "ls -la"
+        },
+        {
+          "wait": 0.3
+        },
+        {
+          "key": "return"
+        },
+        {
+          "wait": 1.0
+        }
+      ]
+    },
+    {
+      "name": "04-prefs",
+      "op": "描述文件",
+      "actions": [
+        {
+          "key": "cmd+,"
+        },
+        {
+          "wait": 1.4
+        }
+      ],
+      "cleanup": [
+        {
+          "key": "cmd+w"
+        },
+        {
+          "wait": 0.5
+        }
+      ]
+    }
+  ]
+}

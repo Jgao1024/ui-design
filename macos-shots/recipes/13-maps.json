@@ -1,0 +1,69 @@
+{
+  "num": 13,
+  "slug": "maps",
+  "app": "地图",
+  "bundle": "com.apple.Maps",
+  "batch": 3,
+  "steps": [
+    {
+      "name": "01-main",
+      "op": "主窗口默认态",
+      "actions": [
+        {
+          "wait": 0.4
+        }
+      ]
+    },
+    {
+      "name": "02-search",
+      "op": "搜索地点",
+      "actions": [
+        {
+          "key": "cmd+f"
+        },
+        {
+          "wait": 0.6
+        }
+      ]
+    },
+    {
+      "name": "03-typed",
+      "op": "搜索结果",
+      "actions": [
+        {
+          "type": "coffee"
+        },
+        {
+          "wait": 0.8
+        },
+        {
+          "key": "return"
+        },
+        {
+          "wait": 1.6
+        }
+      ]
+    },
+    {
+      "name": "05-menu",
+      "op": "菜单（显示）",
+      "actions": [
+        {
+          "menu": "显示"
+        },
+        {
+          "wait": 0.6
+        }
+      ],
+      "capture": "menu",
+      "cleanup": [
+        {
+          "esc": 1
+        },
+        {
+          "wait": 0.3
+        }
+      ]
+    }
+  ]
+}

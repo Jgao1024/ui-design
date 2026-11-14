@@ -1,0 +1,67 @@
+{
+  "num": 23,
+  "slug": "freeform",
+  "app": "无边记",
+  "bundle": "com.apple.freeform",
+  "batch": 4,
+  "pre_actions": [
+    {
+      "key": "cmd+n"
+    },
+    {
+      "wait": 1.4
+    }
+  ],
+  "steps": [
+    {
+      "name": "01-main",
+      "op": "主窗口默认态",
+      "actions": [
+        {
+          "wait": 0.4
+        }
+      ]
+    },
+    {
+      "name": "05-menu",
+      "op": "插入菜单（插入）",
+      "actions": [
+        {
+          "menu": "插入"
+        },
+        {
+          "wait": 0.6
+        }
+      ],
+      "capture": "menu",
+      "cleanup": [
+        {
+          "esc": 1
+        },
+        {
+          "wait": 0.3
+        }
+      ]
+    },
+    {
+      "name": "04-prefs",
+      "op": "偏好设置",
+      "actions": [
+        {
+          "key": "cmd+,"
+        },
+        {
+          "wait": 1.4
+        }
+      ],
+      "cleanup": [
+        {
+          "key": "cmd+w"
+        },
+        {
+          "wait": 0.5
+        }
+      ]
+    }
+  ]
+}
