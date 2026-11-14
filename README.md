@@ -111,6 +111,8 @@ pnpm design:shot      # → design/shots/**（headless Chrome）
 重复结构抽组件、产物不入库可随时重生成。方法论见 [design/SKILL.md](design/SKILL.md)，
 用法见 [design/README.md](design/README.md)。
 
+Liquid Glass 的标准画法和全部组件见 [docs/hyalite-glass.md](docs/hyalite-glass.md)。
+
 ## 许可证
 
 Apple Design Resources 允许用来设计 App，**不允许把素材再分发成组件库**。
