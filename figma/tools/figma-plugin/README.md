@@ -6,9 +6,32 @@
 Figma 插件（导出 SVG）
         │  POST /batch  (每 20 个一批)
         ▼
-receiver.py  ──►  reference/<kit>/svg/<分类>/<页面>__<组件名>.svg
-             ──►  reference/<kit>/svg/_received.jsonl   （断点续传的记录）
-             ──►  reference/<kit>/svg/MANIFEST.json + index.md
+receiver.py  ──►  figma/reference/<kit>/svg/<分类>/<页面>__<组件名>.svg
+             ──►  figma/reference/<kit>/svg/_received.jsonl   （断点续传的记录）
+             ──►  figma/reference/<kit>/svg/MANIFEST.json + index.md
+```
+
+> 接收器写入前会自动把内嵌位图压到显示尺寸（见下节），所以插件端不必为
+> 「SVG 太大」做拆分，`MAX_AREA` 与 `MAX_SVG_BYTES` 都放到了整窗示例不会触发拆分的阈值。
+
+## 内嵌位图会被自动压缩（svg_shrink.py）
+
+Figma 导出会把画板上的图片原样 base64 内嵌。一套 macOS 桌面壁纸 26 MB、一张导出
+里出现一次就是 26 MB —— 历史上 42 次引用共吃掉 1.1 GB。
+
+`receiver.py` 在写盘前调用 `svg_shrink.py`：
+
+| 图片 | 处理 | 典型 |
+|---|---|---|
+| 壁纸（`Wallpaper-*`、不透明的 `image.png`） | 最长边 1512，JPEG q75 | 26 MB → 107 KB |
+| 设备外框（iPhone / iPad / MacBook） | 最长边 768，PNG（保留透明） | 1.3 MB → 46 KB |
+| 图标 | 最长边 256，PNG（保留透明） | 250 KB → 20 KB |
+
+只替换 `<image>` 里的 payload 与 MIME，**SVG 结构一个字节都不动**；带 alpha 的图强制
+保持 PNG。已存在的旧数据可以重新压一遍：
+
+```bash
+python3 figma/tools/figma-pull/svg_shrink.py figma/reference
 ```
 
 ## 六步操作
@@ -17,7 +40,7 @@ receiver.py  ──►  reference/<kit>/svg/<分类>/<页面>__<组件名>.svg
 
 ```bash
 cd ~/Git/ui-design
-python3 tools/figma-pull/receiver.py
+python3 figma/tools/figma-pull/receiver.py
 ```
 
 看到 `receiver: http://127.0.0.1:8917` 就成了。浏览器打开这个地址能看到状态页。
@@ -28,7 +51,7 @@ python3 tools/figma-pull/receiver.py
 
 **2. 导入插件**
 菜单 **Figma → Plugins → Development → Import plugin from manifest…**
-→ 选 `tools/figma-plugin/manifest.json` → Open。
+→ 选 `figma/tools/figma-plugin/manifest.json` → Open。
 
 > 只需导入一次。以后在 Plugins → Development 里直接能看到。
 
@@ -43,8 +66,8 @@ python3 tools/figma-pull/receiver.py
 **5. 验收**
 
 ```bash
-find reference -name '*.svg' | wc -l        # 应该有几千个
-open reference/macos27/svg/index.md
+find figma/reference -name '*.svg' | wc -l        # 应该有几千个
+open figma/reference/macos27/svg/index.md
 ```
 
 ## 出问题怎么修

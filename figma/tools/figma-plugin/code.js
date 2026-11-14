@@ -6,8 +6,12 @@
 
 const BATCH_SIZE = 4;             // small batches keep memory flat
 const NODE_TIMEOUT_MS = 15000;
-const MAX_AREA = 1_500_000;       // px² ceiling for a single export
-const MAX_SVG_BYTES = 4_000_000;  // if the SVG is bigger, split instead
+// 3,000,000 px²: 整窗示例（1512×993 = 1,501,416、1736×1133 = 1,966,888）要整块导出。
+// 原来的 1,500,000 比 1512×993 只小 1,416 px²，把每个整窗示例都误拆成碎片。
+const MAX_AREA = 3_000_000;
+// 40 MB: 带桌面壁纸的整窗导出本来就有 33 MB，接收器 (svg_shrink.py) 会把它压到 ~100 KB。
+// 设 4 MB 会让每个整窗导出都被判「太大」然后拆碎。
+const MAX_SVG_BYTES = 40_000_000;
 const MAX_DEPTH = 3;
 const MAX_CHILDREN = 300;
 

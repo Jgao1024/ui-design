@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import re
 import sys
 from collections import Counter, defaultdict
@@ -153,6 +154,8 @@ def walk(n: dict, depth: int = 0):
 def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--kit", required=True)
+    ap.add_argument("--fresh", action="store_true",
+                    help="先清空 specs/ 与 tokens/，保证不残留上一轮的旧文件")
     args = ap.parse_args()
 
     raw = DATA / "reference" / "_raw" / f"{args.kit}-file.json"
@@ -161,6 +164,12 @@ def main() -> int:
     doc = json.loads(raw.read_text())
     root = doc.get("document") or {}
     out = DATA / "reference" / args.kit
+    if args.fresh:
+        for sub in ("specs", "tokens"):
+            d = out / sub
+            if d.exists():
+                shutil.rmtree(d)
+                print(f"· 已清空 {d.relative_to(ROOT)}")
     (out / "tokens").mkdir(parents=True, exist_ok=True)
 
     color_use: Counter = Counter()

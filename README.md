@@ -30,6 +30,10 @@ figma/tools/figma-pull/
   taxonomy.py                页面 → 分类 的唯一真源（两个脚本共用）
 figma/tools/figma-plugin/    Figma 插件：无限次导出全部 SVG（见其 README）
 figma/tools/build-catalog.py 把 SVG / 参数 / 原始树join成一张总表
+design/                      ← 静态原型页（TSX 写 → 零 JS 单文件 HTML）
+  SKILL.md                   方法论：先画后写、版式规则、状态用 props
+  build.sh / shot.sh         构建 / 截图
+  system/                    jsx runtime、build、theme、公共组件、pages
 ```
 
 ## 分类（两套 kit 共用同一套功能轴）
@@ -83,6 +87,19 @@ python3 figma/tools/figma-pull/receiver.py      # 终端 1，全程开着
 ```
 
 产出 `figma/reference/<kit>/svg/<分类>/`，按节点 id 去重，可断点续传、可重复跑。
+
+## 原型页（`design/`）
+
+从 OpenCut 移植的静态原型页系统：页面用 TSX 写，构建成**零 JS 的单文件 HTML**，JSX 只在构建时跑一次。
+
+```bash
+pnpm design:build     # → design/pages/*.html（自包含 Deno，装在 design/.bin/）
+pnpm design:shot      # → design/shots/*.png（headless Chrome）
+```
+
+改得快的原因：状态是 props（加一个态 = 加一行）、颜色字体全在 `theme.ts`（改一处全站变）、
+重复结构抽组件、产物不入库可随时重生成。方法论见 [design/SKILL.md](design/SKILL.md)，
+用法见 [design/README.md](design/README.md)。
 
 ## 许可证
 

@@ -11,3 +11,9 @@ native/*/*.xcodeproj/
 native/*/*/Resources/registry.json
 xcuserdata/
 *.xcuserstate
+design/pages/
+design/shots/
+design/.bin/
+design/.deno/
+design/.chrome-tmp/
+figma/_backup/
