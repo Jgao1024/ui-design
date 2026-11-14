@@ -1,7 +1,7 @@
 # macOS 27 组件登记表
 
-> 本文件由 `Figma/tools/gen-docs.py` 生成，第 5 节的清单**不要手改**；其余章节的文字改脚本里的 TEMPLATE 后重新生成。
-> 数据源：`Figma/reference/macos27/`（Apple 官方 macOS 27 UI Kit 抽取）。生成时间以数据为准，无时间戳。
+> 本文件由 `figma/tools/gen-docs.py` 生成，第 5 节的清单**不要手改**；其余章节的文字改脚本里的 TEMPLATE 后重新生成。
+> 数据源：`figma/reference/macos27/`（Apple 官方 macOS 27 UI Kit 抽取）。生成时间以数据为准，无时间戳。
 
 ## 1. 文档分工与范围
 
@@ -44,14 +44,14 @@
 
 | 内容 | 位置 | 说明 |
 |---|---|---|
-| 组件族清单与层级 | `Figma/reference/_raw/macos27-file.json` | **只有这里有族 → 变体的关系**（`COMPONENT_SET` 的子节点） |
-| 变体规格 | `Figma/reference/macos27/specs/<分类>/*.json` | 每变体一个文件，字段见 `layout`、`textStyles`、`descendants` |
-| 变体图 | `Figma/reference/macos27/svg/<分类>/*.svg` | 与 `specs/` 一一对应（族和变体各一个），由 Figma 插件导出，**目前为 0 个** |
-| 令牌 | `Figma/reference/macos27/tokens/*.json` | 颜色、文字、效果、几何 |
+| 组件族清单与层级 | `figma/reference/_raw/macos27-file.json` | **只有这里有族 → 变体的关系**（`COMPONENT_SET` 的子节点） |
+| 变体规格 | `figma/reference/macos27/specs/<分类>/*.json` | 每变体一个文件，字段见 `layout`、`textStyles`、`descendants` |
+| 变体图 | `figma/reference/macos27/svg/<分类>/*.svg` | 与 `specs/` 一一对应（族和变体各一个），由 Figma 插件导出，**目前为 0 个** |
+| 令牌 | `figma/reference/macos27/tokens/*.json` | 颜色、文字、效果、几何 |
 
 - **匹配键一律用 nodeId**。规格文件名不唯一（同名会加 `-2` 后缀），也不包含族名，不能靠文件名匹配。
-- 开发第一步写一个数据脚本（放在该 App 自己的目录里，可只读引用 `Figma/tools/refdata.py`），把以上数据汇总成精简 JSON 放进 App 的 `public/data/`，App 运行时只读这份 JSON，不直接读 `Figma/reference/`。
-- `Figma/reference/` 与 SVG 来自 Apple 素材，**不入 git、不发布**；生成的 JSON 同理加入 `.gitignore`。
+- 开发第一步写一个数据脚本（放在该 App 自己的目录里，可只读引用 `figma/tools/refdata.py`），把以上数据汇总成精简 JSON 放进 App 的 `public/data/`，App 运行时只读这份 JSON，不直接读 `figma/reference/`。
+- `figma/reference/` 与 SVG 来自 Apple 素材，**不入 git、不发布**；生成的 JSON 同理加入 `.gitignore`。
 
 ## 5. 组件清单（脚本生成）
 
@@ -579,7 +579,7 @@ _Control BG/Bordered - Prominent - Destructive；_Control BG/Bordered - Prominen
 
 ## 6. 附加：令牌页
 
-这几页不来自 kit 画板，直接由 `Figma/reference/macos27/tokens/` 渲染，归入分类 `08-tokens`。kit 里同名的 `Colors`、`Materials` 画板页照常展示，二者并存。
+这几页不来自 kit 画板，直接由 `figma/reference/macos27/tokens/` 渲染，归入分类 `08-tokens`。kit 里同名的 `Colors`、`Materials` 画板页照常展示，二者并存。
 
 - **颜色**（`tokens/colors.json`：colors 194，gradients 12）：纯色与渐变（hex / alpha / 使用次数）。SwiftUI：**原生**　按 hex 渲染色块，对照系统语义色
 - **文字样式**（`tokens/typography.json`：styles 69）：字体、字重、字号、行高、字距。SwiftUI：**原生**　`Font`、`Font.TextStyle`，字体用系统 SF

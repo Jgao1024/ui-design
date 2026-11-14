@@ -6,7 +6,7 @@ import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]        # 仓库根
-DATA = ROOT / "Figma"                              # Figma 抓取数据与工具
+DATA = ROOT / "figma"                              # Figma 抓取数据与工具
 REF = DATA / "reference"
 
 CATEGORY_LABEL = {

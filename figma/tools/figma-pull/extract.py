@@ -24,7 +24,7 @@ from collections import Counter, defaultdict
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[3]
-DATA = ROOT / "Figma"        # Figma 抓取数据与工具
+DATA = ROOT / "figma"        # Figma 抓取数据与工具
 
 # Page name -> bucket. Explicit beats keyword guessing for Apple kits.
 import sys as _sys

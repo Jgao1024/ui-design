@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.dont_write_bytecode = True
 APP = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "Figma" / "tools"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "figma" / "tools"))
 from refdata import REF, CATEGORY_LABEL, HIG, HIG_URL, TOKEN_PAGES, walk  # noqa: E402
 from swiftui_map import MAP  # noqa: E402
 

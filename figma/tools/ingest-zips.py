@@ -26,7 +26,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent / "figma-pull"))
 from taxonomy import SKIP_BUCKETS, bucket_for, slug  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[2]
-DATA = ROOT / "Figma"        # Figma 抓取数据与工具
+DATA = ROOT / "figma"        # Figma 抓取数据与工具
 
 
 def ordered_pages(kit: str) -> list[str]:

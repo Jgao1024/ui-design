@@ -25,7 +25,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from taxonomy import SKIP_BUCKETS, bucket_for, kit_from_filename, slug  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[3]
-DATA = ROOT / "Figma"        # Figma 抓取数据与工具
+DATA = ROOT / "figma"        # Figma 抓取数据与工具
 MAX_BODY = 256 * 1024 * 1024          # 256 MB: 25 SVGs per batch is nowhere near this
 
 

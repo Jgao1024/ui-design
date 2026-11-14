@@ -1,6 +1,6 @@
 # macOS 27 原生 SwiftUI 组件展示 App
 
-> 本文件由 `Figma/tools/gen-docs.py` 生成。组件的名称、nodeId、变体、属性轴、SwiftUI 对应全部登记在 [macos-components.md](macos-components.md)（**登记表**），实现进度登记在 `native/macos/IMPLEMENTATION.md`。
+> 本文件由 `figma/tools/gen-docs.py` 生成。组件的名称、nodeId、变体、属性轴、SwiftUI 对应全部登记在 [macos-components.md](macos-components.md)（**登记表**），实现进度登记在 `native/macos/IMPLEMENTATION.md`。
 
 ## 1. 目标
 
@@ -50,7 +50,7 @@ xcodebuild -project native/macos/ComponentGalleryMac.xcodeproj -scheme Component
 - 可只读参考网页版的数据脚本 `apps/macos/scripts/build-data.py`：复制思路改写，**不要 import、不要修改**。
 - 内容：分类 → 页面 → 族（id、名称、是否内部件、属性轴、变体名与轴值、尺寸）+ 独立组件 + 内部件 + 4 个令牌页 + 每页的 HIG 链接和 SwiftUI 对应（级别与说明）。
 - 脚本末尾打印对账数字：页面 **38**、公开族 **74**、独立组件 **45**、变体 **909**。
-- App 运行时只读这份 JSON，用 `async` 加载，不直接读 `Figma/reference/`。
+- App 运行时只读这份 JSON，用 `async` 加载，不直接读 `figma/reference/`。
 
 ## 4. App 外壳
 

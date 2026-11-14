@@ -7,7 +7,7 @@ Apple 原生设计语言仓库。参考层从 Apple 官方 **macOS 27 / iOS 27 U
 
 ```
 Figma/                        ← Figma 抓取的全部素材与工具
-Figma/reference/
+figma/reference/
   _raw/                      ← 原始数据（完整、未裁剪，勿删）
     macos27-file.json        Figma 完整文档树 43 MB
     ios27-file.json          Figma 完整文档树 49 MB
@@ -23,13 +23,13 @@ Figma/reference/
     index.md                 人读索引
   CATALOG.md                 跨平台总表：组件 → SVG → 参数（636 行）
   catalog.json               同一份数据的机器可读版
-Figma/tools/figma-pull/
+figma/tools/figma-pull/
   pull.py                    Figma REST 拉取（带缓存，绝不重复计费）
   extract.py                 从缓存的原始树抽取 specs + tokens
   receiver.py                本机接收器：收插件发来的 SVG 批次并归档
   taxonomy.py                页面 → 分类 的唯一真源（两个脚本共用）
-Figma/tools/figma-plugin/    Figma 插件：无限次导出全部 SVG（见其 README）
-Figma/tools/build-catalog.py 把 SVG / 参数 / 原始树join成一张总表
+figma/tools/figma-plugin/    Figma 插件：无限次导出全部 SVG（见其 README）
+figma/tools/build-catalog.py 把 SVG / 参数 / 原始树join成一张总表
 ```
 
 ## 分类（两套 kit 共用同一套功能轴）
@@ -40,8 +40,8 @@ Figma/tools/build-catalog.py 把 SVG / 参数 / 原始树join成一张总表
 ## 重新生成
 
 ```bash
-python3 Figma/tools/figma-pull/extract.py --kit macos27     # 只读本地缓存，0 次 API 调用
-python3 Figma/tools/figma-pull/extract.py --kit ios27
+python3 figma/tools/figma-pull/extract.py --kit macos27     # 只读本地缓存，0 次 API 调用
+python3 figma/tools/figma-pull/extract.py --kit ios27
 ```
 
 只有 `pull.py` 会消耗 Figma 配额；`extract.py` 完全离线，可以随便重跑改分类。
@@ -53,7 +53,7 @@ python3 Figma/tools/figma-pull/extract.py --kit ios27
 | macos27 | ~2 | `/components`（返回空，浪费）+ `/files` 完整树 | ~4 |
 | ios27 | ~2 | 同上 | ~4 |
 
-已拿到的数据**不需要再拉**：原始树在 `Figma/reference/_raw/`，重跑抽取是 0 配额。
+已拿到的数据**不需要再拉**：原始树在 `figma/reference/_raw/`，重跑抽取是 0 配额。
 
 ## 当前成果
 
@@ -66,7 +66,7 @@ python3 Figma/tools/figma-pull/extract.py --kit ios27
 重新生成总表（纯本地，0 配额）：
 
 ```bash
-python3 Figma/tools/build-catalog.py
+python3 figma/tools/build-catalog.py
 ```
 
 ## 组件视觉导出（SVG）—— 走插件桥，0 配额
@@ -74,20 +74,20 @@ python3 Figma/tools/build-catalog.py
 REST 的 `/images` 在免费计划下远远不够（3129 个组件要 13–32 次调用，额度只有 8 次）。
 所以视觉层用插件桥：插件在 Figma 内部读文档，POST 到本机，无限次。
 
-完整操作步骤见 [Figma/tools/figma-plugin/README.md](Figma/tools/figma-plugin/README.md)。最短版本：
+完整操作步骤见 [figma/tools/figma-plugin/README.md](figma/tools/figma-plugin/README.md)。最短版本：
 
 ```bash
-python3 Figma/tools/figma-pull/receiver.py      # 终端 1，全程开着
+python3 figma/tools/figma-pull/receiver.py      # 终端 1，全程开着
 # Figma → Plugins → Development → Import plugin from manifest → 选 manifest.json
 # 打开 kit 文件（先 Duplicate 一份自己的）→ Run → Start All
 ```
 
-产出 `Figma/reference/<kit>/svg/<分类>/`，按节点 id 去重，可断点续传、可重复跑。
+产出 `figma/reference/<kit>/svg/<分类>/`，按节点 id 去重，可断点续传、可重复跑。
 
 ## 许可证
 
 Apple Design Resources 允许用来设计 App，**不允许把素材再分发成组件库**。
-所以 `Figma/reference/` 已写进 `.gitignore`：本机参考可以，不要提交、不要打进发布的 SPM 包。
+所以 `figma/reference/` 已写进 `.gitignore`：本机参考可以，不要提交、不要打进发布的 SPM 包。
 对外发布的只能是自己的 `DesignTokens`（从 tokens/ 抄数值）和 `DesignKit`（自己写的代码）。
 
 `.figma.env` 存 token，已 gitignore，chmod 600。

@@ -28,7 +28,7 @@ from pathlib import Path
 
 API = "https://api.figma.com/v1"
 ROOT = Path(__file__).resolve().parents[3]
-DATA = ROOT / "Figma"        # Figma 抓取数据与工具
+DATA = ROOT / "figma"        # Figma 抓取数据与工具
 TOKEN_FILE = ROOT / ".figma.env"                      # gitignored, chmod 600
 TOKEN_FILE_ALT = Path.home() / ".config" / "ui-design" / "figma.env"
 CALLS = 0
