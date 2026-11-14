@@ -32,8 +32,11 @@ figma/tools/figma-plugin/    Figma 插件：无限次导出全部 SVG（见其 R
 figma/tools/build-catalog.py 把 SVG / 参数 / 原始树join成一张总表
 design/                      ← 静态原型页（TSX 写 → 零 JS 单文件 HTML）
   SKILL.md                   方法论：先画后写、版式规则、状态用 props
-  build.sh / shot.sh         构建 / 截图
-  system/                    jsx runtime、build、theme、公共组件、pages
+  build.sh / shot.sh         构建 / 截图（产物 → design/pages/<项目>/）
+  kits/                      一个项目一个文件夹：ios27 / macos27 / shared
+    <kit>/screens            手绘页     <kit>/atlas  图集页（生成）
+  system/                    工具链：jsx runtime、build、theme、公共组件
+  scripts/atlas.py           从 figma/reference 生成全组件图集
 ```
 
 ## 分类（两套 kit 共用同一套功能轴）
@@ -93,9 +96,12 @@ python3 figma/tools/figma-pull/receiver.py      # 终端 1，全程开着
 从 OpenCut 移植的静态原型页系统：页面用 TSX 写，构建成**零 JS 的单文件 HTML**，JSX 只在构建时跑一次。
 
 ```bash
-pnpm design:build     # → design/pages/*.html（自包含 Deno，装在 design/.bin/）
-pnpm design:shot      # → design/shots/*.png（headless Chrome）
+pnpm design:build     # → design/pages/<项目>/**/*.html（自包含 Deno，装在 design/.bin/）
+pnpm design:shot      # → design/shots/**（headless Chrome）
 ```
+
+**一个项目一个文件夹**：`design/kits/ios27/`、`design/kits/macos27/` 各自独立，
+产物镜像到 `design/pages/ios27/`、`design/pages/macos27/`。新增项目照此新建文件夹，不要混放。
 
 改得快的原因：状态是 props（加一个态 = 加一行）、颜色字体全在 `theme.ts`（改一处全站变）、
 重复结构抽组件、产物不入库可随时重生成。方法论见 [design/SKILL.md](design/SKILL.md)，

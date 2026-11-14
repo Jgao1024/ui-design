@@ -10,7 +10,9 @@
     "build:macos": "vite build apps/macos",
     "build:ios": "vite build apps/ios",
     "typecheck:macos": "tsc --noEmit -p apps/macos",
-    "typecheck:ios": "tsc --noEmit -p apps/ios"
+    "typecheck:ios": "tsc --noEmit -p apps/ios",
+    "design:build": "./design/build.sh",
+    "design:shot": "./design/shot.sh"
   },
   "devDependencies": {
     "typescript": "^7.0.2",

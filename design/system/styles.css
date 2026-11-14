@@ -1,0 +1,6 @@
+/* Liquid Glass layers. Numbers come from figma/reference/<kit>/specs/08-tokens/Materials__Liquid-Glass-*.json.
+   Figma's GLASS effect has no parameters, so refraction and blur are drawn by glass.tsx. */
+@theme {
+  --shadow-glass-light: 0 8px 48px rgb(0 0 0 / 25%);
+  --shadow-glass-dark: 0 8px 48px rgb(0 0 0 / 45%);
+}
