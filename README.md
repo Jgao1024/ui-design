@@ -24,7 +24,7 @@ figma/reference/
   CATALOG.md                 跨平台总表：组件 → SVG → 参数（636 行）
   catalog.json               同一份数据的机器可读版
 figma/raw-archive/_raw.tar.zst  上述 _raw 的 zstd 包（1.5MB，可逐字节还原）
-figma/tools/raw-pack/rawpack.py  pack / restore / verify 三个动作
+figma/tools/raw-pack/rawpack.py  pack / restore / verify 三个动作（见 docs/figma-raw.md）
 figma/tools/figma-pull/
   pull.py                    Figma REST 拉取（带缓存，绝不重复计费）
   extract.py                 从缓存的原始树抽取 specs + tokens
