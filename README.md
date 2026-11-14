@@ -30,6 +30,7 @@ figma/tools/figma-pull/
   taxonomy.py                页面 → 分类 的唯一真源（两个脚本共用）
 figma/tools/figma-plugin/    Figma 插件：无限次导出全部 SVG（见其 README）
 figma/tools/build-catalog.py 把 SVG / 参数 / 原始树join成一张总表
+figma/tools/svg-pack/        SVG 281MB 太大：抽位图去重 + 分类 tar.zst（见 docs/svg-pack.md）
 design/                      ← 静态原型页（TSX 写 → 零 JS 单文件 HTML）
   SKILL.md                   方法论：先画后写、版式规则、状态用 props
   build.sh / shot.sh         构建 / 截图（产物 → design/pages/<项目>/）

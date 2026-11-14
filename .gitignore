@@ -34,3 +34,7 @@ macos-shots/bin/
 *.orig
 *~
 *.swp
+
+# SVG 打包产物（待定是否入库）
+figma/svg-packed/
+figma/svg-packed-webp/
