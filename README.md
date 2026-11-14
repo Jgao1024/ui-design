@@ -8,21 +8,23 @@ Apple 原生设计语言仓库。参考层从 Apple 官方 **macOS 27 / iOS 27 U
 ```
 Figma/                        ← Figma 抓取的全部素材与工具
 figma/reference/
-  _raw/                      ← 原始数据（完整、未裁剪，勿删）
+  _raw/                      原始文档树，本地已删：96MB → 1.5MB 压缩包（见下）
     macos27-file.json        Figma 完整文档树 43 MB
     ios27-file.json          Figma 完整文档树 49 MB
     *-components.json        /components 探测结果（空：社区副本无 library 组件）
   macos27/  ios27/
     specs/<分类>/*.json      每个组件一个文件：几何、颜色、字体、效果、变体
-    svg/<分类>/*.svg         每个组件的矢量导出（插件桥写入）
     tokens/colors.json       全部纯色 + 渐变（hex / alpha / 使用次数 / 用在哪）
     tokens/typography.json   全部文字样式（字体、字重、字号、行高、字距）
     tokens/effects.json      全部效果 —— BACKGROUND_BLUR 就是 Liquid Glass 材质层
     tokens/geometry.json     圆角、auto-layout 间距、组件尺寸分布
+    svg/<分类>/*.svg        本地已删(281MB)，见 figma/svg-packed/ 与 docs/svg-pack.md
     MANIFEST.json            组件 → 文件 映射
     index.md                 人读索引
   CATALOG.md                 跨平台总表：组件 → SVG → 参数（636 行）
   catalog.json               同一份数据的机器可读版
+figma/raw-archive/_raw.tar.zst  上述 _raw 的 zstd 包（1.5MB，可逐字节还原）
+figma/tools/raw-pack/rawpack.py  pack / restore / verify 三个动作
 figma/tools/figma-pull/
   pull.py                    Figma REST 拉取（带缓存，绝不重复计费）
   extract.py                 从缓存的原始树抽取 specs + tokens
@@ -61,7 +63,8 @@ python3 figma/tools/figma-pull/extract.py --kit ios27
 | macos27 | ~2 | `/components`（返回空，浪费）+ `/files` 完整树 | ~4 |
 | ios27 | ~2 | 同上 | ~4 |
 
-已拿到的数据**不需要再拉**：原始树在 `figma/reference/_raw/`，重跑抽取是 0 配额。
+已拿到的数据**不需要再拉**：原始树打包在 `figma/raw-archive/_raw.tar.zst`（1.5MB），
+`python3 figma/tools/raw-pack/rawpack.py restore` 还原后重跑抽取，0 配额。
 
 ## 当前成果
 
