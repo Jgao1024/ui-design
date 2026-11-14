@@ -167,8 +167,8 @@ function roundedRectDistance(x: number, y: number, w: number, h: number, r: numb
 const cache = new Map<string, string>();
 
 /// R = shift X, G = shift Y (128 = none), B = the signed edge profile (128 = neutral).
-function displacementMap(width: number, height: number, radius: number, profile: LensProfile): string {
-  const key = [width, height, radius, profile.shape, profile.bevel, profile.thickness, profile.max.toFixed(3)].join(":");
+function displacementMap(width: number, height: number, radius: number, profile: LensProfile, pad = 0, guard = 1.5): string {
+  const key = [width, height, radius, pad, guard, profile.shape, profile.bevel, profile.thickness, profile.max.toFixed(3)].join(":");
   const hit = cache.get(key);
   if (hit) return hit;
 
@@ -178,15 +178,19 @@ function displacementMap(width: number, height: number, radius: number, profile:
     for (let x = 0; x < width; x++) {
       const px = x + 0.5;
       const py = y + 0.5;
-      const depth = -roundedRectDistance(px, py, width, height, radius);
+      // `pad` bleeds the shape inward, so a copy of the backdrop can be filtered with room to
+      // sample outside the visible edge instead of hitting transparency.
+      const depth = -roundedRectDistance(px - pad, py - pad, width - 2 * pad, height - 2 * pad, radius);
       let ux = 0;
       let uy = 0;
       let amount = 0;
       let shade = 0;
-      if (depth > 1.5 && depth < bevel) {
+      if (depth > guard && depth < bevel) {
         const e = 1;
-        const gx = roundedRectDistance(px + e, py, width, height, radius) - roundedRectDistance(px - e, py, width, height, radius);
-        const gy = roundedRectDistance(px, py + e, width, height, radius) - roundedRectDistance(px, py - e, width, height, radius);
+        const gx = roundedRectDistance(px + e - pad, py - pad, width - 2 * pad, height - 2 * pad, radius) -
+          roundedRectDistance(px - e - pad, py - pad, width - 2 * pad, height - 2 * pad, radius);
+        const gy = roundedRectDistance(px - pad, py + e - pad, width - 2 * pad, height - 2 * pad, radius) -
+          roundedRectDistance(px - pad, py - e - pad, width - 2 * pad, height - 2 * pad, radius);
         const length = Math.hypot(gx, gy) || 1;
         ux = gx / length;
         uy = gy / length;
@@ -203,6 +207,20 @@ function displacementMap(width: number, height: number, radius: number, profile:
   const url = toDataUrl(rgb, width, height);
   cache.set(key, url);
   return url;
+}
+
+/// The map URL for a profile, for callers that build their own filter graph.
+export function lensMapUrl(width: number, height: number, radius: number, profile: LensProfile, pad = 0, guard = 1.5): string {
+  return displacementMap(width, height, radius, profile, pad, guard);
+}
+
+/// Displacement only: for filtering a copy of the backdrop, where there is nothing to shade.
+export function displacementFilter(id: string, url: string, scale: number, blur = 0): string {
+  const soft = blur > 0
+    ? `<feGaussianBlur in="SourceGraphic" stdDeviation="${blur}" result="soft"/>`
+    : "";
+  return `<feImage preserveAspectRatio="none" result="map" href="${url}" xlink:href="${url}"/>` + soft +
+    `<feDisplacementMap in="${blur > 0 ? "soft" : "SourceGraphic"}" in2="map" scale="${scale.toFixed(2)}" xChannelSelector="R" yChannelSelector="G"/>`;
 }
 
 let instance = 0;
