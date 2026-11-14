@@ -45,3 +45,13 @@ For new UI or visual changes, also apply [UI design](../ui-design/SKILL.md).
 - Do not write new tests unless the user explicitly requests them.
 - Do not change existing tests.
 - Never write absolute paths in files; use paths relative to the repository root.
+
+## Tracked files and caches
+
+- Caches, dependency trees and build output (`node_modules/`, `design/.bin/`, `design/.deno/`,
+  `design/.chrome-tmp/`, `design/pages/`, `native/*/build/`, `.tmp/`) must stay out of Git —
+  that is what `.gitignore` is for — but they must **not** be deleted. Deleting them only
+  forces a re-download or a rebuild later. Leave them on disk.
+- Deleting a file that is not in Git is a separate decision from ignoring it: only remove large
+  data the user explicitly agrees to drop, and say plainly whether it can be regenerated.
+
