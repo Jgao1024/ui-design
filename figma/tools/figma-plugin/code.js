@@ -5,7 +5,12 @@
 // which are exported one by one (recursively, up to MAX_DEPTH).
 
 const BATCH_SIZE = 4;             // small batches keep memory flat
-const NODE_TIMEOUT_MS = 15000;
+// 关键：按「累计字节」而不是「个数」攒批。
+// 一张带桌面壁纸的整窗 SVG 就有 30 MB，攒 4 张 = 120 MB，
+// 再乘上 postMessage 的复制和 JSON.stringify 的字符串，插件沙箱必爆。
+// 4 MB 意味着大图一定是「一张一批」。
+const MAX_BATCH_BYTES = 4_000_000;
+const NODE_TIMEOUT_MS = 45000;    // 大画板导出慢，15 s 会误判超时
 // 3,000,000 px²: 整窗示例（1512×993 = 1,501,416、1736×1133 = 1,966,888）要整块导出。
 // 原来的 1,500,000 比 1512×993 只小 1,416 px²，把每个整窗示例都误拆成碎片。
 const MAX_AREA = 3_000_000;
@@ -166,7 +171,16 @@ async function run(force) {
   figma.ui.postMessage({ type: 'started', kit: kit, total: total, file: file });
 
   const buffer = [];
+  let bufferBytes = 0;
   let processed = 0, emitted = 0, failed = 0, skipped = 0;
+
+  async function maybeFlush() {
+    if (buffer.length >= BATCH_SIZE || bufferBytes >= MAX_BATCH_BYTES) {
+      await flush(buffer, kit);
+      bufferBytes = 0;
+      await new Promise(function (r) { setTimeout(r, 120); });
+    }
+  }
 
   async function push(node, pageName, name) {
     const box = node.absoluteBoundingBox || { width: 0, height: 0 };
@@ -176,11 +190,9 @@ async function run(force) {
       id: node.id, name: name, type: node.type, page: pageName,
       w: Math.round(box.width), h: Math.round(box.height), svg: svg
     });
+    bufferBytes += svg.length;
     emitted++;
-    if (buffer.length >= BATCH_SIZE) {
-      await flush(buffer, kit);
-      await new Promise(function (r) { setTimeout(r, 120); });
-    }
+    await maybeFlush();
     return { ok: true };
   }
 
@@ -234,8 +246,9 @@ async function run(force) {
             id: node.id, name: name, type: node.type, page: pageName,
             w: Math.round(box2.width), h: Math.round(box2.height), svg: raw
           });
+          bufferBytes += raw.length;
           emitted++;
-          if (buffer.length >= BATCH_SIZE) { await flush(buffer, kit); await new Promise(function (r) { setTimeout(r, 120); }); }
+          await maybeFlush();
           doneSet.add(node.id);
         } catch (e2) {
           failed++;
@@ -267,6 +280,7 @@ async function run(force) {
 
   try { await flush(buffer, kit); } catch (e) { log('末批失败：' + errText(e), 'error'); }
   buffer.length = 0;
+  bufferBytes = 0;
   figma.ui.postMessage({ type: 'progress', done: processed, total: total, failed: failed, emitted: emitted });
   figma.ui.postMessage({
     type: 'finished', kit: kit, done: processed, emitted: emitted,

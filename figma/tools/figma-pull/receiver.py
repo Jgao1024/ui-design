@@ -86,6 +86,8 @@ class Store:
             self.skipped += 1
             return False
         svg = item.get("svg") or ""
+        if len(svg) > 5_000_000:
+            print(f"· 大文件 {round(len(svg) / 1e6)} MB  ← {item.get('name')}（转码中，请稍候）", flush=True)
         if not svg.lstrip().startswith("<"):
             self.failed.append({"id": node_id, "name": item.get("name"),
                                 "why": "empty or non-SVG payload"})
@@ -218,12 +220,16 @@ class Handler(BaseHTTPRequestHandler):
 
     def _json(self, code: int, payload: dict) -> None:
         body = json.dumps(payload).encode()
-        self.send_response(code)
-        self._cors()
-        self.send_header("Content-Type", "application/json")
-        self.send_header("Content-Length", str(len(body)))
-        self.end_headers()
-        self.wfile.write(body)
+        try:
+            self.send_response(code)
+            self._cors()
+            self.send_header("Content-Type", "application/json")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+        except (BrokenPipeError, ConnectionResetError):
+            # 插件那边超时/崩溃先断了连接。数据已经落盘，不用当成错误。
+            sys.stderr.write("· 客户端已断开（数据已写入），忽略\n")
 
     def do_OPTIONS(self) -> None:                       # noqa: N802
         self.send_response(204)

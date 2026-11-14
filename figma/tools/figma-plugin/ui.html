@@ -86,9 +86,11 @@
     attempt = attempt || 1;
     // stringify once and reuse across retries — re-stringifying doubles memory per attempt
     body = body || JSON.stringify({ kit: window.__kit || 'ios27', items: items });
+    // 大图上传 + 接收端转码都要时间，固定 20 s 会把 30 MB 的整窗导出卡断（服务端看到 BrokenPipe）
+    var wait = body.length > 4_000_000 ? 180000 : 30000;
     req(ENDPOINT + '/batch', {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: body
-    }, 20000)
+    }, wait)
       .then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
       .then(function (res) {
         sent += res.added || 0;
