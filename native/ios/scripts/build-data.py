@@ -17,7 +17,7 @@ import sys
 from pathlib import Path
 
 APP = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(APP.parent.parent / "tools"))
+sys.path.insert(0, str(APP.parent.parent / "Figma" / "tools"))
 from refdata import REF, CATEGORY_LABEL, HIG, HIG_URL, TOKEN_PAGES, walk  # noqa: E402
 from swiftui_map import MAP  # noqa: E402
 

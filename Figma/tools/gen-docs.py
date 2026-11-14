@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""从 reference/_raw 的 Figma 原始树生成文档：
+"""从 Figma/reference/_raw 的 Figma 原始树生成文档：
   docs/macos-components.md、docs/ios-components.md      组件登记表（清单 + SwiftUI 对应）
   docs/native-macos-app.md、docs/native-ios-app.md      原生 SwiftUI App 需求
   native/macos/IMPLEMENTATION.md、native/ios/IMPLEMENTATION.md   实现登记表骨架（已存在则不覆盖，由开发 agent 维护）
 
 只读本地缓存，不访问网络。清单（第 5 节）完全由脚本生成；其余章节的文字在本文件的 TEMPLATE 里改。
-用法：python3 tools/gen-docs.py [macos27|ios27]   （不带参数则两份都生成）
+用法：python3 Figma/tools/gen-docs.py [macos27|ios27]   （不带参数则两份都生成）
 """
 import collections
 import json
@@ -18,8 +18,8 @@ OUT = ROOT / "docs"
 
 TEMPLATE = """# {title}
 
-> 本文件由 `tools/gen-docs.py` 生成，第 5 节的清单**不要手改**；其余章节的文字改脚本里的 TEMPLATE 后重新生成。
-> 数据源：`reference/{kit}/`（Apple 官方 {label} UI Kit 抽取）。生成时间以数据为准，无时间戳。
+> 本文件由 `Figma/tools/gen-docs.py` 生成，第 5 节的清单**不要手改**；其余章节的文字改脚本里的 TEMPLATE 后重新生成。
+> 数据源：`Figma/reference/{kit}/`（Apple 官方 {label} UI Kit 抽取）。生成时间以数据为准，无时间戳。
 
 ## 1. 文档分工与范围
 
@@ -56,14 +56,14 @@ TEMPLATE = """# {title}
 
 | 内容 | 位置 | 说明 |
 |---|---|---|
-| 组件族清单与层级 | `reference/_raw/{kit}-file.json` | **只有这里有族 → 变体的关系**（`COMPONENT_SET` 的子节点） |
-| 变体规格 | `reference/{kit}/specs/<分类>/*.json` | 每变体一个文件，字段见 `layout`、`textStyles`、`descendants` |
-| 变体图 | `reference/{kit}/svg/<分类>/*.svg` | 与 `specs/` 一一对应（族和变体各一个），由 Figma 插件导出，**目前为 0 个** |
-| 令牌 | `reference/{kit}/tokens/*.json` | 颜色、文字、效果、几何 |
+| 组件族清单与层级 | `Figma/reference/_raw/{kit}-file.json` | **只有这里有族 → 变体的关系**（`COMPONENT_SET` 的子节点） |
+| 变体规格 | `Figma/reference/{kit}/specs/<分类>/*.json` | 每变体一个文件，字段见 `layout`、`textStyles`、`descendants` |
+| 变体图 | `Figma/reference/{kit}/svg/<分类>/*.svg` | 与 `specs/` 一一对应（族和变体各一个），由 Figma 插件导出，**目前为 0 个** |
+| 令牌 | `Figma/reference/{kit}/tokens/*.json` | 颜色、文字、效果、几何 |
 
 - **匹配键一律用 nodeId**。规格文件名不唯一（同名会加 `-2` 后缀），也不包含族名，不能靠文件名匹配。
-- 开发第一步写一个数据脚本（放在该 App 自己的目录里，可只读引用 `tools/refdata.py`），把以上数据汇总成精简 JSON 放进 App 的 `public/data/`，App 运行时只读这份 JSON，不直接读 `reference/`。
-- `reference/` 与 SVG 来自 Apple 素材，**不入 git、不发布**；生成的 JSON 同理加入 `.gitignore`。
+- 开发第一步写一个数据脚本（放在该 App 自己的目录里，可只读引用 `Figma/tools/refdata.py`），把以上数据汇总成精简 JSON 放进 App 的 `public/data/`，App 运行时只读这份 JSON，不直接读 `Figma/reference/`。
+- `Figma/reference/` 与 SVG 来自 Apple 素材，**不入 git、不发布**；生成的 JSON 同理加入 `.gitignore`。
 
 ## 5. 组件清单（脚本生成）
 
@@ -85,7 +85,7 @@ TEMPLATE = """# {title}
 
 ## 6. 附加：令牌页
 
-这几页不来自 kit 画板，直接由 `reference/{kit}/tokens/` 渲染，归入分类 `08-tokens`。kit 里同名的 `Colors`、`Materials` 画板页照常展示，二者并存。
+这几页不来自 kit 画板，直接由 `Figma/reference/{kit}/tokens/` 渲染，归入分类 `08-tokens`。kit 里同名的 `Colors`、`Materials` 画板页照常展示，二者并存。
 
 {token_pages}
 
@@ -135,7 +135,7 @@ MODE_NOTE = {
 
 NATIVE_TEMPLATE = """# {label} 原生 SwiftUI 组件展示 App
 
-> 本文件由 `tools/gen-docs.py` 生成。组件的名称、nodeId、变体、属性轴、SwiftUI 对应全部登记在 [{x}-components.md]({x}-components.md)（**登记表**），实现进度登记在 `native/{x}/IMPLEMENTATION.md`。
+> 本文件由 `Figma/tools/gen-docs.py` 生成。组件的名称、nodeId、变体、属性轴、SwiftUI 对应全部登记在 [{x}-components.md]({x}-components.md)（**登记表**），实现进度登记在 `native/{x}/IMPLEMENTATION.md`。
 
 ## 1. 目标
 
@@ -184,7 +184,7 @@ native/{x}/
 - 可只读参考网页版的数据脚本 `apps/{x}/scripts/build-data.py`：复制思路改写，**不要 import、不要修改**。
 - 内容：分类 → 页面 → 族（id、名称、是否内部件、属性轴、变体名与轴值、尺寸）+ 独立组件 + 内部件 + 4 个令牌页 + 每页的 HIG 链接和 SwiftUI 对应（级别与说明）。
 - 脚本末尾打印对账数字：页面 **{n_pages}**、公开族 **{n_pub}**、独立组件 **{n_solo}**、变体 **{n_var}**。
-- App 运行时只读这份 JSON，用 `async` 加载，不直接读 `reference/`。
+- App 运行时只读这份 JSON，用 `async` 加载，不直接读 `Figma/reference/`。
 
 ## 4. App 外壳
 
@@ -337,7 +337,8 @@ def build(kit):
             n_int += len(internal)
             all_pub += [(page, s) for s in pub]
             links = " · ".join(f"[{h}]({HIG_URL}{h})" for h in hig.get(page, [])) or "无对应 HIG 页"
-            level, apis = MAP[kit][page]
+            # 用法示例页（00-examples）不是组件，swiftui_map 里没有对应项，按未登记处理
+            level, apis = MAP.get(kit, {}).get(page, ("未登记", "用法示例板，非组件"))
             level_count[level] += 1
             records.append({"bucket": bucket, "page": page, "level": level, "apis": apis,
                             "pub": pub, "solo": solo_pub, "internal": internal})
@@ -425,7 +426,7 @@ def build(kit):
         print(f"{impl.relative_to(ROOT)}: 已存在，不覆盖")
     else:
         impl.parent.mkdir(parents=True, exist_ok=True)
-        head = (f"# {label} 原生实现登记表\n\n> 骨架由 `tools/gen-docs.py` 首次生成，之后由开发 agent 维护，**脚本不再覆盖**。\n"
+        head = (f"# {label} 原生实现登记表\n\n> 骨架由 `Figma/tools/gen-docs.py` 首次生成，之后由开发 agent 维护，**脚本不再覆盖**。\n"
                 f"> 需求见 [native-{x}-app.md](../../docs/native-{x}-app.md)，组件清单见 [{x}-components.md](../../docs/{x}-components.md)。\n"
                 f"> {STATUS_LEGEND}每实现一个族就立即更新它的行；`无法实现` 必须写原因。\n\n")
         impl.write_text(head + "\n".join(rows) + "\n", encoding="utf-8")

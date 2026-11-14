@@ -24,7 +24,8 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from taxonomy import SKIP_BUCKETS, bucket_for, kit_from_filename, slug  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
+DATA = ROOT / "Figma"        # Figma 抓取数据与工具
 MAX_BODY = 256 * 1024 * 1024          # 256 MB: 25 SVGs per batch is nowhere near this
 
 
@@ -42,7 +43,7 @@ class Store:
         self.load()
 
     def load(self) -> None:
-        for jl in (ROOT / "reference").glob("*/svg/_received.jsonl"):
+        for jl in (DATA / "reference").glob("*/svg/_received.jsonl"):
             kit = jl.parents[1].name
             ids = self.ids.setdefault(kit, {})
             for line in jl.read_text().splitlines():
@@ -67,7 +68,7 @@ class Store:
         if node_id and node_id in ids:
             # only skip if the recorded file is really there -- a gap must be repairable
             recorded = ids[node_id]
-            if recorded and (ROOT / "reference" / kit / recorded).exists():
+            if recorded and (DATA / "reference" / kit / recorded).exists():
                 self.skipped += 1
                 return False
         page = (item.get("page") or "").strip()
@@ -81,7 +82,7 @@ class Store:
                                 "why": "empty or non-SVG payload"})
             return False
 
-        folder = ROOT / "reference" / kit / "svg" / bucket
+        folder = DATA / "reference" / kit / "svg" / bucket
         folder.mkdir(parents=True, exist_ok=True)
         base = f'{slug(page)}__{slug(item.get("name") or "untitled")}'
         self.seen[base] += 1
@@ -92,7 +93,7 @@ class Store:
             ids[node_id] = f"svg/{bucket}/{fname}"
         self.written[kit] += 1
         self.kits[kit] += 1
-        with open(ROOT / "reference" / kit / "svg" / "_received.jsonl", "a") as fh:
+        with open(DATA / "reference" / kit / "svg" / "_received.jsonl", "a") as fh:
             fh.write(json.dumps({
                 "id": node_id, "name": item.get("name"), "type": item.get("type"),
                 "page": page, "bucket": bucket, "w": item.get("w"), "h": item.get("h"),
@@ -108,7 +109,7 @@ def master_nodes(kit: str) -> list[dict]:
     the set) and at COMPONENT; recurse through SECTION / FRAME / GROUP. Going by node
     id sidesteps every page-loading quirk of the plugin API.
     """
-    raw = ROOT / "reference" / "_raw" / f"{kit}-file.json"
+    raw = DATA / "reference" / "_raw" / f"{kit}-file.json"
     if not raw.exists():
         return []
     doc = json.loads(raw.read_text())
@@ -135,7 +136,7 @@ STORE = Store()
 
 
 def build_index(kit: str) -> dict:
-    base = ROOT / "reference" / kit / "svg"
+    base = DATA / "reference" / kit / "svg"
     rows: list[dict] = []
     jl = base / "_received.jsonl"
     if jl.exists():
@@ -259,7 +260,7 @@ class Handler(BaseHTTPRequestHandler):
 
         if route == "/failure":
             kit = payload.get("kit") or "unknown"
-            folder = ROOT / "reference" / kit / "svg"
+            folder = DATA / "reference" / kit / "svg"
             folder.mkdir(parents=True, exist_ok=True)
             with open(folder / "_failures.jsonl", "a") as fh:
                 fh.write(json.dumps(payload, ensure_ascii=False) + "\n")

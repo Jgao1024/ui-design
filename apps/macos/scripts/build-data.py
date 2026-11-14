@@ -9,7 +9,7 @@ from pathlib import Path
 
 sys.dont_write_bytecode = True
 APP = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "tools"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / "Figma" / "tools"))
 from refdata import ROOT, REF, CATEGORY_LABEL, HIG, HIG_URL, TOKEN_PAGES, walk  # noqa: E402
 
 KIT = "macos27"

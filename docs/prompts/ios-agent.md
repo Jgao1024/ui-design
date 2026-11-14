@@ -5,11 +5,11 @@
 - **只能写入 `apps/ios/` 下的文件。**
 - 只读，不得修改：
   - `docs/ios-components.md`（**唯一需求来源**，全文都是需求）
-  - `reference/ios27/`、`reference/_raw/ios27-*.json`
-  - `tools/refdata.py`、`tools/figma-pull/`
-- 禁止创建或修改：`apps/macos/**`、`docs/**`、`tools/**`、根目录的 `package.json`、`pnpm-workspace.yaml`、`.gitignore`、`pnpm-lock.yaml`、`node_modules/`。
+  - `Figma/reference/ios27/`、`Figma/reference/_raw/ios27-*.json`
+  - `Figma/tools/refdata.py`、`Figma/tools/figma-pull/`
+- 禁止创建或修改：`apps/macos/**`、`docs/**`、`Figma/tools/**`、根目录的 `package.json`、`pnpm-workspace.yaml`、`.gitignore`、`pnpm-lock.yaml`、`node_modules/`。
 - 禁止新增依赖。确实需要时，写进最终报告，不要自己装。
-- 不跑任何 git 命令，不读 `.figma.env`，不修改 `reference/`。
+- 不跑任何 git 命令，不读 `.figma.env`，不修改 `Figma/reference/`。
 - 不建共享包，不 import `apps/macos/**`。另一个 agent 在同时开发 macOS App，两边代码重复是有意的，目的是避免冲突。
 
 ## 1. 目标
@@ -33,18 +33,18 @@ public/svg/           # 脚本复制，已被 .gitignore 忽略
 ```
 
 - 根目录已配好这些命令，**不要改**：`pnpm data:ios`、`pnpm dev:ios`（端口 5174）、`pnpm build:ios`、`pnpm typecheck:ios`。
-- App 运行时只读 `public/data/` 下的 JSON，不直接读 `reference/`。
+- App 运行时只读 `public/data/` 下的 JSON，不直接读 `Figma/reference/`。
 
 ## 3. 数据脚本要点（`scripts/build-data.py`）
 
 - 复用公共读取代码：脚本开头 `sys.path.insert(0, <仓库根>/tools)`，然后 `from refdata import ROOT, REF, CATEGORY_LABEL, HIG, HIG_URL, TOKEN_PAGES, walk`。
-  - `walk(node, page, in_set, out)`：遍历 `reference/_raw/ios27-file.json` 的 `document.children`，`out` 初始化为 `{"sets": [], "solo": []}`。
+  - `walk(node, page, in_set, out)`：遍历 `Figma/reference/_raw/ios27-file.json` 的 `document.children`，`out` 初始化为 `{"sets": [], "solo": []}`。
   - `out["sets"]` 每项：`page, name, id, variants, axes(有序字典), kids[{id,name,w,h}]`。
   - `out["solo"]` 每项：`page, name, id, w, h`。
   - 以 `_` 开头的名字是内部件。
-- 页面清单与顺序：`reference/ios27/MANIFEST.json` 的 `pages`，跳过 `bucket == "00-meta"`。令牌页追加到 `08-tokens` 末尾，页面 slug 固定为 `tokens-colors`、`tokens-typography`、`tokens-effects`、`tokens-geometry`。
-- 规格：`reference/ios27/specs/<分类>/*.json`，**用文件内的 `nodeId` 字段匹配**，不要用文件名。单个文件可能很大，必须**瘦身后再输出**，只保留：尺寸、圆角、布局方向与间距、填充（hex + alpha）、效果类型、文字样式（字体、字重、字号、行高、字距、文本）。禁止原样复制。
-- SVG：`reference/ios27/svg/MANIFEST.json` 的 `items[]` 里 `id` 就是 nodeId，`file` 是相对 `reference/ios27/` 的路径。命中的才复制到 `public/svg/`。**目录或文件不存在时不能报错**，输出的数据里不带 `svg` 字段即可，前端据此显示占位。
+- 页面清单与顺序：`Figma/reference/ios27/MANIFEST.json` 的 `pages`，跳过 `bucket == "00-meta"`。令牌页追加到 `08-tokens` 末尾，页面 slug 固定为 `tokens-colors`、`tokens-typography`、`tokens-effects`、`tokens-geometry`。
+- 规格：`Figma/reference/ios27/specs/<分类>/*.json`，**用文件内的 `nodeId` 字段匹配**，不要用文件名。单个文件可能很大，必须**瘦身后再输出**，只保留：尺寸、圆角、布局方向与间距、填充（hex + alpha）、效果类型、文字样式（字体、字重、字号、行高、字距、文本）。禁止原样复制。
+- SVG：`Figma/reference/ios27/svg/MANIFEST.json` 的 `items[]` 里 `id` 就是 nodeId，`file` 是相对 `Figma/reference/ios27/` 的路径。命中的才复制到 `public/svg/`。**目录或文件不存在时不能报错**，输出的数据里不带 `svg` 字段即可，前端据此显示占位。
 - 脚本末尾打印四个数字用于对账：**页面 40、公开族 81、独立组件 67、变体 520**（含义见文档第 1 节）。
 
 ## 4. 展示细节（文档没写的约定）

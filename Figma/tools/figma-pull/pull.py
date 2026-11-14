@@ -27,7 +27,8 @@ import urllib.request
 from pathlib import Path
 
 API = "https://api.figma.com/v1"
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
+DATA = ROOT / "Figma"        # Figma 抓取数据与工具
 TOKEN_FILE = ROOT / ".figma.env"                      # gitignored, chmod 600
 TOKEN_FILE_ALT = Path.home() / ".config" / "ui-design" / "figma.env"
 CALLS = 0
@@ -247,8 +248,8 @@ def main() -> int:
                     help="node types to export (comma separated)")
     args = ap.parse_args()
 
-    out = ROOT / "reference" / args.kit
-    raw = ROOT / "reference" / "_raw"
+    out = DATA / "reference" / args.kit
+    raw = DATA / "reference" / "_raw"
     raw.mkdir(parents=True, exist_ok=True)
 
     token = load_token(args.token)

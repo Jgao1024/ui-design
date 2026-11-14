@@ -21,12 +21,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent / "figma-pull"))
 from taxonomy import SKIP_BUCKETS, bucket_for  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
+DATA = ROOT / "Figma"        # Figma 抓取数据与工具
 KITS = ("macos27", "ios27")
 
 
 def masters_of(kit: str) -> list[dict]:
-    raw = ROOT / "reference" / "_raw" / f"{kit}-file.json"
+    raw = DATA / "reference" / "_raw" / f"{kit}-file.json"
     if not raw.exists():
         return []
     doc = json.loads(raw.read_text())
@@ -56,7 +57,7 @@ def masters_of(kit: str) -> list[dict]:
 
 def svg_index(kit: str) -> tuple[dict, dict]:
     """(page, name) -> [files] for masters, plus a flat name index for split parts."""
-    base = ROOT / "reference" / kit / "svg" / "MANIFEST.json"
+    base = DATA / "reference" / kit / "svg" / "MANIFEST.json"
     if not base.exists():
         return {}, {}
     items = json.loads(base.read_text()).get("items") or []
@@ -71,7 +72,7 @@ def svg_index(kit: str) -> tuple[dict, dict]:
 
 def spec_index(kit: str) -> dict[tuple[str, str], str]:
     out: dict[tuple[str, str], str] = {}
-    base = ROOT / "reference" / kit / "specs"
+    base = DATA / "reference" / kit / "specs"
     if not base.exists():
         return out
     for p in base.rglob("*.json"):
@@ -79,7 +80,7 @@ def spec_index(kit: str) -> dict[tuple[str, str], str]:
             d = json.loads(p.read_text())
         except Exception:  # noqa: BLE001
             continue
-        out[(d.get("page") or "", (d.get("component") or "").strip())] = str(p.relative_to(ROOT / "reference"))
+        out[(d.get("page") or "", (d.get("component") or "").strip())] = str(p.relative_to(DATA / "reference"))
     return out
 
 
@@ -131,7 +132,7 @@ def md_table(rows: list[dict], kit: str) -> list[str]:
 
 def main() -> int:
     data = {k: build(k) for k in KITS}
-    (ROOT / "reference" / "catalog.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
+    (DATA / "reference" / "catalog.json").write_text(json.dumps(data, ensure_ascii=False, indent=2))
 
     lines = ["# 组件总表（macOS 27 + iOS 27）", ""]
     lines += ["| 平台 | 主组件 | 有 SVG | 有参数 | 磁盘 SVG | 未归属 |", "|---|---|---|---|---|---|"]
@@ -160,7 +161,7 @@ def main() -> int:
             lines.append(f'- [{Path(f).name}]({k}/{f})')
         lines.append("")
 
-    (ROOT / "reference" / "CATALOG.md").write_text("\n".join(lines))
+    (DATA / "reference" / "CATALOG.md").write_text("\n".join(lines))
     for k, d in data.items():
         print(f'{k}: {d["masters"]} masters, {d["with_svg"]} with svg, '
               f'{d["with_spec"]} with spec, {d["svg_files"]} svg files')

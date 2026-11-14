@@ -25,12 +25,13 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent / "figma-pull"))
 from taxonomy import SKIP_BUCKETS, bucket_for, slug  # noqa: E402
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
+DATA = ROOT / "Figma"        # Figma 抓取数据与工具
 
 
 def ordered_pages(kit: str) -> list[str]:
     """Pages of one kit, in document order, minus cover/examples/license separators."""
-    raw = ROOT / "reference" / "_raw" / f"{kit}-file.json"
+    raw = DATA / "reference" / "_raw" / f"{kit}-file.json"
     if not raw.exists():
         raise SystemExit(f"missing {raw.relative_to(ROOT)}")
     doc = json.loads(raw.read_text())
@@ -109,14 +110,14 @@ def main() -> int:
                 print(f"        · {name}")
             continue
 
-        folder = ROOT / "reference" / args.kit / "svg" / bucket
+        folder = DATA / "reference" / args.kit / "svg" / bucket
         folder.mkdir(parents=True, exist_ok=True)
         for name, data in items:
             key = f"{slug(page)}__{slug(name)}"
             seen[key] = seen.get(key, 0) + 1
             fname = f"{key}.svg" if seen[key] == 1 else f"{key}-{seen[key]}.svg"
             (folder / fname).write_bytes(data)
-            with open(ROOT / "reference" / args.kit / "svg" / "_received.jsonl", "a") as fh:
+            with open(DATA / "reference" / args.kit / "svg" / "_received.jsonl", "a") as fh:
                 fh.write(json.dumps({
                     "id": None, "name": name, "type": None, "page": page,
                     "bucket": bucket, "file": f"svg/{bucket}/{fname}",

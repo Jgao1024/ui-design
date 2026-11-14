@@ -1,7 +1,7 @@
 # iOS 27 组件登记表
 
-> 本文件由 `tools/gen-docs.py` 生成，第 5 节的清单**不要手改**；其余章节的文字改脚本里的 TEMPLATE 后重新生成。
-> 数据源：`reference/ios27/`（Apple 官方 iOS 27 UI Kit 抽取）。生成时间以数据为准，无时间戳。
+> 本文件由 `Figma/tools/gen-docs.py` 生成，第 5 节的清单**不要手改**；其余章节的文字改脚本里的 TEMPLATE 后重新生成。
+> 数据源：`Figma/reference/ios27/`（Apple 官方 iOS 27 UI Kit 抽取）。生成时间以数据为准，无时间戳。
 
 ## 1. 文档分工与范围
 
@@ -9,7 +9,7 @@
 - **原生 SwiftUI App** 的需求见 [native-ios-app.md](native-ios-app.md)，实现进度登记在 `native/ios/IMPLEMENTATION.md`。
 - **网页版**（`apps/ios`，TypeScript，已完成并保留）的需求就是本文第 2、3、8 节，原生版不适用这三节。
 - 本文档只管 iOS 27。另一个平台有独立文档，两边代码、数据、目录完全独立，互不依赖。
-- 数据规模：**39 个展示页面**（8 个分类），**81 个公开组件族**，67 个独立组件，520 个变体，133 个内部件（默认隐藏）。
+- 数据规模：**41 个展示页面**（8 个分类），**106 个公开组件族**，94 个独立组件，634 个变体，135 个内部件（默认隐藏）。
 
 ## 2. 切换与导航（网页版，已完成）
 
@@ -39,20 +39,20 @@
 | Tab Bars | Tab Bar - iPhone | 24 |
 | Tab Bars | Tab Bar - iPhone Duo | 24 |
 | Buttons | Button - Liquid Glass - Text | 24 |
-| Keyboards | Keyboard | 16 |
+| Examples | Examples/Sheets (Modals) | 20 |
 
 ## 4. 数据来源与匹配规则
 
 | 内容 | 位置 | 说明 |
 |---|---|---|
-| 组件族清单与层级 | `reference/_raw/ios27-file.json` | **只有这里有族 → 变体的关系**（`COMPONENT_SET` 的子节点） |
-| 变体规格 | `reference/ios27/specs/<分类>/*.json` | 每变体一个文件，字段见 `layout`、`textStyles`、`descendants` |
-| 变体图 | `reference/ios27/svg/<分类>/*.svg` | 与 `specs/` 一一对应（族和变体各一个），由 Figma 插件导出，**目前为 0 个** |
-| 令牌 | `reference/ios27/tokens/*.json` | 颜色、文字、效果、几何 |
+| 组件族清单与层级 | `Figma/reference/_raw/ios27-file.json` | **只有这里有族 → 变体的关系**（`COMPONENT_SET` 的子节点） |
+| 变体规格 | `Figma/reference/ios27/specs/<分类>/*.json` | 每变体一个文件，字段见 `layout`、`textStyles`、`descendants` |
+| 变体图 | `Figma/reference/ios27/svg/<分类>/*.svg` | 与 `specs/` 一一对应（族和变体各一个），由 Figma 插件导出，**目前为 0 个** |
+| 令牌 | `Figma/reference/ios27/tokens/*.json` | 颜色、文字、效果、几何 |
 
 - **匹配键一律用 nodeId**。规格文件名不唯一（同名会加 `-2` 后缀），也不包含族名，不能靠文件名匹配。
-- 开发第一步写一个数据脚本（放在该 App 自己的目录里，可只读引用 `tools/refdata.py`），把以上数据汇总成精简 JSON 放进 App 的 `public/data/`，App 运行时只读这份 JSON，不直接读 `reference/`。
-- `reference/` 与 SVG 来自 Apple 素材，**不入 git、不发布**；生成的 JSON 同理加入 `.gitignore`。
+- 开发第一步写一个数据脚本（放在该 App 自己的目录里，可只读引用 `Figma/tools/refdata.py`），把以上数据汇总成精简 JSON 放进 App 的 `public/data/`，App 运行时只读这份 JSON，不直接读 `Figma/reference/`。
+- `Figma/reference/` 与 SVG 来自 Apple 素材，**不入 git、不发布**；生成的 JSON 同理加入 `.gitignore`。
 
 ## 5. 组件清单（脚本生成）
 
@@ -69,6 +69,44 @@
 | 不做 | 没有对应 API，也不是控件（如设备外框） |
 
 页面级别分布：原生 31　桥接 0　部分 2　自绘 5　不做 1
+
+### 00-examples 示例
+
+#### Examples
+
+SwiftUI：**未登记**　用法示例板，非组件
+
+HIG：无对应 HIG 页　|　公开族 25 · 独立组件 27 · 变体 114 · 内部件 0
+
+| 族 | 变体 | 属性轴 | nodeId |
+|---|---|---|---|
+| Examples/Tab Bars | 2 | Type: Without Search, With Search | `12740:23859` |
+| Examples/Menus | 2 | Type: Edit Menu, Menu and Submenu | `12740:23879` |
+| Examples/Keyboard | 2 | Type: Text (Upper Case), Text (Lower Case) | `12740:23934` |
+| Examples/Alert | 2 | Keyboard: True, False | `12740:23974` |
+| Examples/Toolbars - Top | 4 | Type: 2 Line - Left Aligned, 2 Line - Center Aligned, 2 Line - Large Title Inline, 2 Line - Large Title | `12740:23811` |
+| Examples/Tab Bar | 2 | Split Search: False, True | `12740:24076` |
+| Examples/Sheets (Modals) | 3 | Type: Fullscreen, Fullscreen Stack, Inspector | `12740:24097` |
+| Examples/Picker | 2 | Type: Inline, Compact | `12740:24134` |
+| Examples/Menus | 2 | Type: Edit Medium, Menu | `12740:24156` |
+| Examples/List | 3 | Type: Inset, Full Width, Full Width + Section Headers | `12740:24202` |
+| Examples/Keyboard | 11 | Type: Lowercase, Uppercase, Punctuation, Numberic, Find, Find and Replace …+5 | `12740:24268` |
+| Examples/Empty States | 3 | Config: Title and Subtitle, Symbol in Circle, Large Symbol | `12740:24438` |
+| Examples/Toolbars - Bottom | 3 | Type: Search, Symbols, Text | `12740:24038` |
+| Examples/Toolbars - Top | 5 | Type: Title 2 Line Left, Title 2 Line, Large Title, Compact Large Title, Default | `12740:23996` |
+| Examples/Toolbars | 4 | Screen: Inner, Outer · Orientation: Landscape, Portrait · Type: Full Screen | `12887:23253` |
+| Examples/Tab Bars | 4 | Screen: Inner, Outer · Orientation: Landscape, Portrait · Type: Full Screen | `12887:21801` |
+| Examples/Sheets (Modals) | 20 | Screen: Inner (Folded), Inner, Outer · Orientation: Landscape, Portrait · Type: Small Detent, Medium Detent, Large Detent, Full Screen | `12886:17616` |
+| Examples/Alerts | 5 | Screen: Inner (Folded), Inner, Outer · Orientation: Landscape, Portrait · Type: Full Screen | `12956:22765` |
+| Examples/Keyboard | 16 | Screen: Inner, Outer · Orientation: Landscape, Portrait · Type: Punctuation, Numeric, Lowercase, Uppercase | `12891:50098` |
+| Examples/Activity View | 4 | Screen: Inner, Outer · Orientation: Landscape, Portrait · Type: Uppercase | `12946:17194` |
+| Examples/Notifications | 2 | Expanded: True, False | `12740:24417` |
+| Examples/Home Screen Widgets | 4 | Size: Small, Medium, Large, XL | `12740:24470` |
+| Examples/Home Screen | 3 | Screen: Inner, Outer · Orientation: Landscape, Portrait | `13159:44042` |
+| Examples/Notifications | 2 | Expanded: True, False | `12740:23782` |
+| Examples/Home Screen Widgets | 4 | Size: Small, Medium, Large, Extra Large | `12740:23795` |
+
+独立组件：Examples/Sidebar `12740:37613`；Examples/Popover `12740:37608`；Examples/Sheets (Modals) `12740:37607`；Examples/List `12740:37605`；Examples/Context Menu `12740:37612`；Examples/Color Picker `12740:37604`；Examples/Action Sheet `12740:37603`；Examples/Activity View `12740:37606`；Examples/Slider `12740:35186`；Examples/Steppers `12740:35192`；Examples/Face ID `13159:44726`；Examples/Context Menu `12740:35183`；Examples/Color Picker `12740:35184`；Examples/Action Sheet `12740:35185`；Examples/Alert `13159:44659`；Examples/Activity View `12740:35190`；Examples/Text Fields `12740:35194`；Examples/Toggles (Switches) `12740:35193`；Examples/Lock Screen `12740:35191`；Examples/Home Screen Quick Actions `12740:35187`；Examples/Home Screen `12740:35189`；Examples/Control Center `12740:35188`；Examples/Window `12740:37615`；Examples/Lock Screen `12740:37614`；Examples/Home Screen Quick Actions `12740:37610`；Examples/Home Screen `12740:37611`；Examples/Control Center `12740:37609`
 
 ### 01-navigation 导航
 
@@ -642,15 +680,29 @@ _Layout Overlays
 
 </details>
 
+### 09-assets 素材
+
+#### _Kit Helpers
+
+SwiftUI：**未登记**　用法示例板，非组件
+
+HIG：无对应 HIG 页　|　公开族 0 · 独立组件 0 · 变体 0 · 内部件 2
+
+<details><summary>内部件 2 个（默认隐藏）</summary>
+
+_Mode Label；_Component Header
+
+</details>
+
 
 ## 6. 附加：令牌页
 
-这几页不来自 kit 画板，直接由 `reference/ios27/tokens/` 渲染，归入分类 `08-tokens`。kit 里同名的 `Colors`、`Materials` 画板页照常展示，二者并存。
+这几页不来自 kit 画板，直接由 `Figma/reference/ios27/tokens/` 渲染，归入分类 `08-tokens`。kit 里同名的 `Colors`、`Materials` 画板页照常展示，二者并存。
 
-- **颜色**（`tokens/colors.json`：colors 297，gradients 9）：纯色与渐变（hex / alpha / 使用次数）。SwiftUI：**原生**　按 hex 渲染色块，对照系统语义色
-- **文字样式**（`tokens/typography.json`：styles 296）：字体、字重、字号、行高、字距。SwiftUI：**原生**　`Font`、`Font.TextStyle`，字体用系统 SF
+- **颜色**（`tokens/colors.json`：colors 298，gradients 9）：纯色与渐变（hex / alpha / 使用次数）。SwiftUI：**原生**　按 hex 渲染色块，对照系统语义色
+- **文字样式**（`tokens/typography.json`：styles 298）：字体、字重、字号、行高、字距。SwiftUI：**原生**　`Font`、`Font.TextStyle`，字体用系统 SF
 - **效果与材质**（`tokens/effects.json`：effects 74）：模糊、阴影等，BACKGROUND_BLUR 即 Liquid Glass 材质层。SwiftUI：**原生**　`Material`、`.glassEffect`、`.shadow`、`.blur`
-- **几何**（`tokens/geometry.json`：cornerRadii 44，itemSpacing 76，componentSizes 200）：圆角、间距、组件尺寸分布。SwiftUI：**原生**　纯数值展示：圆角、间距、尺寸
+- **几何**（`tokens/geometry.json`：cornerRadii 47，itemSpacing 80，componentSizes 200）：圆角、间距、组件尺寸分布。SwiftUI：**原生**　纯数值展示：圆角、间距、尺寸
 
 ## 7. 本期不做
 
@@ -662,7 +714,7 @@ HIG 有页面，但 iOS 27 kit 没有对应设计稿，需要另行手绘，**v1
 
 | 步骤 | 内容 | 验收 |
 |---|---|---|
-| D1 数据 | 写汇总脚本，生成精简 JSON | 页面数 39、公开族 81、独立组件 67、变体 520 与第 1 节完全一致 |
+| D1 数据 | 写汇总脚本，生成精简 JSON | 页面数 41、公开族 106、独立组件 94、变体 634 与第 1 节完全一致 |
 | D2 外壳 | 浮窗按钮、`⌘K` 面板、搜索、`←` `→`、hash 路由、明暗开关 | 第 5 节每个页面都能从面板到达；刷新后位置不丢 |
 | D3 页面 | 按第 3 节渲染所有页面（占位图） | 逐页打开无报错；变体最多的族滚动流畅 |
 | D4 规格面板 | 点击变体显示只读规格 | 任选 5 个变体，数值与 `specs/*.json` 一致 |

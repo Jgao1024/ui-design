@@ -6,11 +6,11 @@
 - 只读，不得修改：
   - `docs/native-ios-app.md`（**需求文档**，全文都是需求）
   - `docs/ios-components.md`（**登记表**：全部页面、族、nodeId、属性轴、SwiftUI 对应）
-  - `reference/ios27/`、`reference/_raw/ios27-*.json`
-  - `tools/refdata.py`、`tools/swiftui_map.py`
+  - `Figma/reference/ios27/`、`Figma/reference/_raw/ios27-*.json`
+  - `Figma/tools/refdata.py`、`Figma/tools/swiftui_map.py`
   - `apps/ios/scripts/build-data.py`（网页版数据脚本，只能读来参考，不能 import 或改）
   - `.agent/skills/`
-- 禁止创建或修改：`native/macos/**`、`apps/**`、`docs/**`、`tools/**`、根目录所有文件、`reference/**`。
+- 禁止创建或修改：`native/macos/**`、`apps/**`、`docs/**`、`Figma/tools/**`、根目录所有文件、`Figma/reference/**`。
 - 不跑 git 命令，不读 `.figma.env`，不引入第三方依赖，**不依赖 SVG**。
 - 另一个 agent 在同时开发 macOS 原生 App，两边互不依赖，不要 import 对方的任何东西。
 - 构建产物只放 `native/ios/build/`（用 `-derivedDataPath`），不要碰默认 DerivedData，不要启动或关闭 Xcode。

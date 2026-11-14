@@ -1,13 +1,13 @@
 # macOS 27 原生 SwiftUI 组件展示 App
 
-> 本文件由 `tools/gen-docs.py` 生成。组件的名称、nodeId、变体、属性轴、SwiftUI 对应全部登记在 [macos-components.md](macos-components.md)（**登记表**），实现进度登记在 `native/macos/IMPLEMENTATION.md`。
+> 本文件由 `Figma/tools/gen-docs.py` 生成。组件的名称、nodeId、变体、属性轴、SwiftUI 对应全部登记在 [macos-components.md](macos-components.md)（**登记表**），实现进度登记在 `native/macos/IMPLEMENTATION.md`。
 
 ## 1. 目标
 
 - 用 SwiftUI 做一个原生 macOS App，把登记表里的页面和组件族用**系统真实控件**渲染出来。看到的是系统本身的样子，不是图片，也不是网页模拟。
 - 只展示，不做业务逻辑；不联网；**不依赖 SVG**（Figma 导出图还没下载，v1 不做，不要为它写任何代码）。
 - **登记表和 App 一一对应**：登记表里的每个页面、每个族、每个独立组件，在 App 里都必须有位置。做不到真实渲染的，也要显示出来并写明原因，不能静默漏掉。
-- 规模：36 个页面（含 4 个令牌页），71 个公开族，17 个独立组件，869 个变体，55 个内部件。
+- 规模：38 个页面（含 4 个令牌页），74 个公开族，45 个独立组件，909 个变体，65 个内部件。
 - 页面级别分布（定义见登记表第 5 节）：原生 30　桥接 2　部分 2　自绘 1　不做 1
 
 ## 2. 工程与环境（已在本机核实）
@@ -49,8 +49,8 @@ xcodebuild -project native/macos/ComponentGalleryMac.xcodeproj -scheme Component
 - 由 `native/macos/scripts/build-data.py` 生成到 `ComponentGalleryMac/Resources/registry.json`。脚本用 `sys.path.insert(0, <仓库根>/tools)` 后 `from refdata import ...`、`from swiftui_map import MAP` 复用公共代码。
 - 可只读参考网页版的数据脚本 `apps/macos/scripts/build-data.py`：复制思路改写，**不要 import、不要修改**。
 - 内容：分类 → 页面 → 族（id、名称、是否内部件、属性轴、变体名与轴值、尺寸）+ 独立组件 + 内部件 + 4 个令牌页 + 每页的 HIG 链接和 SwiftUI 对应（级别与说明）。
-- 脚本末尾打印对账数字：页面 **36**、公开族 **71**、独立组件 **17**、变体 **869**。
-- App 运行时只读这份 JSON，用 `async` 加载，不直接读 `reference/`。
+- 脚本末尾打印对账数字：页面 **38**、公开族 **74**、独立组件 **45**、变体 **909**。
+- App 运行时只读这份 JSON，用 `async` 加载，不直接读 `Figma/reference/`。
 
 ## 4. App 外壳
 
@@ -90,7 +90,7 @@ xcodebuild -project native/macos/ComponentGalleryMac.xcodeproj -scheme Component
 
 ## 6. 实现登记（`native/macos/IMPLEMENTATION.md`）
 
-- 骨架已由脚本生成，每个族、独立组件、内部件一行，共 **147** 行；脚本不会覆盖已存在的文件，之后由开发 agent 维护。
+- 骨架已由脚本生成，每个族、独立组件、内部件一行，共 **188** 行；脚本不会覆盖已存在的文件，之后由开发 agent 维护。
 - 列：类型 · 名称 · nodeId · 变体 · 状态 · SwiftUI 实现 · 文件 · 备注。
 - 状态只用这五个值：`未开始`、`已实现`、`部分实现`、`无法实现`、`内部件`。
 - 每实现一个族，**立即**更新它的行：写清用了哪个 SwiftUI 类型和修饰符、所在文件、哪些变体没复现。

@@ -1,7 +1,7 @@
 # macOS 27 组件登记表
 
-> 本文件由 `tools/gen-docs.py` 生成，第 5 节的清单**不要手改**；其余章节的文字改脚本里的 TEMPLATE 后重新生成。
-> 数据源：`reference/macos27/`（Apple 官方 macOS 27 UI Kit 抽取）。生成时间以数据为准，无时间戳。
+> 本文件由 `Figma/tools/gen-docs.py` 生成，第 5 节的清单**不要手改**；其余章节的文字改脚本里的 TEMPLATE 后重新生成。
+> 数据源：`Figma/reference/macos27/`（Apple 官方 macOS 27 UI Kit 抽取）。生成时间以数据为准，无时间戳。
 
 ## 1. 文档分工与范围
 
@@ -9,7 +9,7 @@
 - **原生 SwiftUI App** 的需求见 [native-macos-app.md](native-macos-app.md)，实现进度登记在 `native/macos/IMPLEMENTATION.md`。
 - **网页版**（`apps/macos`，TypeScript，已完成并保留）的需求就是本文第 2、3、8 节，原生版不适用这三节。
 - 本文档只管 macOS 27。另一个平台有独立文档，两边代码、数据、目录完全独立，互不依赖。
-- 数据规模：**36 个展示页面**（8 个分类），**71 个公开组件族**，17 个独立组件，869 个变体，55 个内部件（默认隐藏）。
+- 数据规模：**38 个展示页面**（8 个分类），**74 个公开组件族**，45 个独立组件，909 个变体，65 个内部件（默认隐藏）。
 
 ## 2. 切换与导航（网页版，已完成）
 
@@ -44,14 +44,14 @@
 
 | 内容 | 位置 | 说明 |
 |---|---|---|
-| 组件族清单与层级 | `reference/_raw/macos27-file.json` | **只有这里有族 → 变体的关系**（`COMPONENT_SET` 的子节点） |
-| 变体规格 | `reference/macos27/specs/<分类>/*.json` | 每变体一个文件，字段见 `layout`、`textStyles`、`descendants` |
-| 变体图 | `reference/macos27/svg/<分类>/*.svg` | 与 `specs/` 一一对应（族和变体各一个），由 Figma 插件导出，**目前为 0 个** |
-| 令牌 | `reference/macos27/tokens/*.json` | 颜色、文字、效果、几何 |
+| 组件族清单与层级 | `Figma/reference/_raw/macos27-file.json` | **只有这里有族 → 变体的关系**（`COMPONENT_SET` 的子节点） |
+| 变体规格 | `Figma/reference/macos27/specs/<分类>/*.json` | 每变体一个文件，字段见 `layout`、`textStyles`、`descendants` |
+| 变体图 | `Figma/reference/macos27/svg/<分类>/*.svg` | 与 `specs/` 一一对应（族和变体各一个），由 Figma 插件导出，**目前为 0 个** |
+| 令牌 | `Figma/reference/macos27/tokens/*.json` | 颜色、文字、效果、几何 |
 
 - **匹配键一律用 nodeId**。规格文件名不唯一（同名会加 `-2` 后缀），也不包含族名，不能靠文件名匹配。
-- 开发第一步写一个数据脚本（放在该 App 自己的目录里，可只读引用 `tools/refdata.py`），把以上数据汇总成精简 JSON 放进 App 的 `public/data/`，App 运行时只读这份 JSON，不直接读 `reference/`。
-- `reference/` 与 SVG 来自 Apple 素材，**不入 git、不发布**；生成的 JSON 同理加入 `.gitignore`。
+- 开发第一步写一个数据脚本（放在该 App 自己的目录里，可只读引用 `Figma/tools/refdata.py`），把以上数据汇总成精简 JSON 放进 App 的 `public/data/`，App 运行时只读这份 JSON，不直接读 `Figma/reference/`。
+- `Figma/reference/` 与 SVG 来自 Apple 素材，**不入 git、不发布**；生成的 JSON 同理加入 `.gitignore`。
 
 ## 5. 组件清单（脚本生成）
 
@@ -68,6 +68,16 @@
 | 不做 | 没有对应 API，也不是控件（如设备外框） |
 
 页面级别分布：原生 30　桥接 2　部分 2　自绘 1　不做 1
+
+### 00-examples 示例
+
+#### Examples
+
+SwiftUI：**未登记**　用法示例板，非组件
+
+HIG：无对应 HIG 页　|　公开族 0 · 独立组件 26 · 变体 0 · 内部件 0
+
+独立组件：Examples/Utility Window `4440:8166`；Examples/Utility Window `4440:8167`；Examples/Windows/Default with Titlebar and Sidebar `4440:8164`；Examples/Windows/Unified Compact Toolbar + Title `4440:8162`；Examples/Windows/Expaned Toolbar + Title `4440:8160`；Examples/Windows/Unified Toolbar + Title `4440:8158`；Examples/Windows/Default with Titlebar and Sidebar `4440:8165`；Examples/Windows/Unified Compact Toolbar + Title `4440:8163`；Examples/Windows/Expaned Toolbar + Title `4440:8161`；Examples/Windows/Unified Toolbar + Title `4440:8159`；Examples/Notifications `4440:8156`；Examples/Notifications `4440:8157`；Examples/Menubar `4440:8154`；Examples/Menubar `4440:8155`；Examples/List `4440:8151`；Examples/Form `4440:8150`；Examples/List `4440:8153`；Examples/Form `4440:8152`；Examples/Dialog/Save - Large `4440:8147`；Examples/Dialog/Save - Small `4440:8146`；Examples/Dialog/Save - Large `4440:8149`；Examples/Dialog/Save - Small `4440:8148`；Examples/Alert/Side-by-side - Window Modal `4440:8143`；Examples/Alert/Side-by-side `4440:8142`；Examples/Alert/Side-by-side - Window Modal `4440:8145`；Examples/Alert/Side-by-side `4440:8144`
 
 ### 01-navigation 导航
 
@@ -544,15 +554,37 @@ HIG：[materials](https://developer.apple.com/design/human-interface-guidelines/
 | Liquid Glass - Medium | 2 | Mode: Dark, Light | `483:9250` |
 | Liquid Glass - Small | 8 | Mode: Dark, Light · Active: False, True · State: Primary, Default | `483:9263` |
 
+### 09-assets 素材
+
+#### _Kit
+
+SwiftUI：**未登记**　用法示例板，非组件
+
+HIG：无对应 HIG 页　|　公开族 3 · 独立组件 2 · 变体 40 · 内部件 10
+
+| 族 | 变体 | 属性轴 | nodeId |
+|---|---|---|---|
+| Segmented Control | 12 | Mode: Dark, Light · Context: Content Area, Over-Glass · State: Disabled, Clicked, Idle | `4348:4764` |
+| Glyphs | 12 | Mode: Dark, Light · State: Disabled, Idle · Style: Colored, Neutral, Primary | `4348:5406` |
+| Knobs | 16 | Property 1: Over-Glass, Content Area · Property 2: Dark, Light · Property 3: Knobs - Toggle · Property 4: 04 - Disabled, 03 - Clicked, 01 - Idle, 03 - Clicked - Glow, 03 - Clicked - Shadow | `4348:4744` |
+
+独立组件：Header `453:3362`；Content Area/Light/Knobs - Sliders/01 - Idle `4338:10369`
+
+<details><summary>内部件 10 个（默认隐藏）</summary>
+
+_Control BG/Bordered - Prominent - Destructive；_Control BG/Bordered - Prominent；_Control BG/Bordered - Destructive；_Control BG/Bordered - Tinted；_Control BG/Bordered；_Control BG/Bordered - Toggle；_Control BG/Controls；_Tracks - Unfilled；_Tracks - Filled；_Ticks
+
+</details>
+
 
 ## 6. 附加：令牌页
 
-这几页不来自 kit 画板，直接由 `reference/macos27/tokens/` 渲染，归入分类 `08-tokens`。kit 里同名的 `Colors`、`Materials` 画板页照常展示，二者并存。
+这几页不来自 kit 画板，直接由 `Figma/reference/macos27/tokens/` 渲染，归入分类 `08-tokens`。kit 里同名的 `Colors`、`Materials` 画板页照常展示，二者并存。
 
-- **颜色**（`tokens/colors.json`：colors 185，gradients 12）：纯色与渐变（hex / alpha / 使用次数）。SwiftUI：**原生**　按 hex 渲染色块，对照系统语义色
-- **文字样式**（`tokens/typography.json`：styles 68）：字体、字重、字号、行高、字距。SwiftUI：**原生**　`Font`、`Font.TextStyle`，字体用系统 SF
-- **效果与材质**（`tokens/effects.json`：effects 131）：模糊、阴影等，BACKGROUND_BLUR 即 Liquid Glass 材质层。SwiftUI：**原生**　`Material`、`.glassEffect`、`.shadow`、`.blur`
-- **几何**（`tokens/geometry.json`：cornerRadii 25，itemSpacing 20，componentSizes 200）：圆角、间距、组件尺寸分布。SwiftUI：**原生**　纯数值展示：圆角、间距、尺寸
+- **颜色**（`tokens/colors.json`：colors 194，gradients 12）：纯色与渐变（hex / alpha / 使用次数）。SwiftUI：**原生**　按 hex 渲染色块，对照系统语义色
+- **文字样式**（`tokens/typography.json`：styles 69）：字体、字重、字号、行高、字距。SwiftUI：**原生**　`Font`、`Font.TextStyle`，字体用系统 SF
+- **效果与材质**（`tokens/effects.json`：effects 132）：模糊、阴影等，BACKGROUND_BLUR 即 Liquid Glass 材质层。SwiftUI：**原生**　`Material`、`.glassEffect`、`.shadow`、`.blur`
+- **几何**（`tokens/geometry.json`：cornerRadii 25，itemSpacing 21，componentSizes 200）：圆角、间距、组件尺寸分布。SwiftUI：**原生**　纯数值展示：圆角、间距、尺寸
 
 ## 7. 本期不做
 
@@ -564,7 +596,7 @@ HIG 有页面，但 macOS 27 kit 没有对应设计稿，需要另行手绘，**
 
 | 步骤 | 内容 | 验收 |
 |---|---|---|
-| D1 数据 | 写汇总脚本，生成精简 JSON | 页面数 36、公开族 71、独立组件 17、变体 869 与第 1 节完全一致 |
+| D1 数据 | 写汇总脚本，生成精简 JSON | 页面数 38、公开族 74、独立组件 45、变体 909 与第 1 节完全一致 |
 | D2 外壳 | 浮窗按钮、`⌘K` 面板、搜索、`←` `→`、hash 路由、明暗开关 | 第 5 节每个页面都能从面板到达；刷新后位置不丢 |
 | D3 页面 | 按第 3 节渲染所有页面（占位图） | 逐页打开无报错；变体最多的族滚动流畅 |
 | D4 规格面板 | 点击变体显示只读规格 | 任选 5 个变体，数值与 `specs/*.json` 一致 |

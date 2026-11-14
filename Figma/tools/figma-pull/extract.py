@@ -23,7 +23,8 @@ import sys
 from collections import Counter, defaultdict
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parents[2]
+ROOT = Path(__file__).resolve().parents[3]
+DATA = ROOT / "Figma"        # Figma 抓取数据与工具
 
 # Page name -> bucket. Explicit beats keyword guessing for Apple kits.
 import sys as _sys
@@ -154,12 +155,12 @@ def main() -> int:
     ap.add_argument("--kit", required=True)
     args = ap.parse_args()
 
-    raw = ROOT / "reference" / "_raw" / f"{args.kit}-file.json"
+    raw = DATA / "reference" / "_raw" / f"{args.kit}-file.json"
     if not raw.exists():
         raise SystemExit(f"missing {raw.relative_to(ROOT)} -- run pull.py --inspect first")
     doc = json.loads(raw.read_text())
     root = doc.get("document") or {}
-    out = ROOT / "reference" / args.kit
+    out = DATA / "reference" / args.kit
     (out / "tokens").mkdir(parents=True, exist_ok=True)
 
     color_use: Counter = Counter()

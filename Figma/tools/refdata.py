@@ -5,12 +5,15 @@ import collections
 import re
 from pathlib import Path
 
-ROOT = Path(__file__).resolve().parent.parent
-REF = ROOT / "reference"
+ROOT = Path(__file__).resolve().parents[2]        # 仓库根
+DATA = ROOT / "Figma"                              # Figma 抓取数据与工具
+REF = DATA / "reference"
 
 CATEGORY_LABEL = {
-    "01-navigation": "导航", "02-bars": "栏", "03-controls": "控件", "04-input": "输入",
+    "00-examples": "示例", "01-navigation": "导航", "02-bars": "栏", "03-controls": "控件",
+    "04-input": "输入",
     "05-collections": "集合", "06-overlays": "浮层", "07-system": "系统", "08-tokens": "设计令牌",
+    "09-assets": "素材",
 }
 
 # kit 页面 → HIG 页面 slug。None = HIG 没有对应页。slug 已逐个请求 HIG JSON 接口确认返回 200。
