@@ -3,6 +3,7 @@
 Figma 导出的 686 个 SVG(`figma/reference/<kit>/svg/`)共 **281MB**,其中 **94% 是
 base64 内嵌的位图**,且重复严重:2,626 次引用只对应 607 张唯一图。把位图抽出去重后,
 按 Figma 分类打成 `tar.zst`,降到 **60MB(原体积的 21%,精确 60.4MB)**。
+原始 281MB 已删,靠 `restore.py` 可逐字节还原。
 
 **无损**:位图存的是 base64 解码后的原始字节,SVG 文本除数据 URI 外一个字节没改,
 686 个文件全部可以逐字节还原(实测 686/686 一致)。
@@ -68,11 +69,21 @@ ls /tmp/svg/svg/*.svg | wc -l    # 该分类 SVG 数
 ls /tmp/svg/img | wc -l          # 唯一位图数
 ```
 
-## 还原成原始 SVG
+## 还原成原始 SVG（已实测 686/686 逐字节一致）
 
-需要原文件时,把 `../img/<hash>.png` 内联回 `data:image/png;base64,...` 即可,
-其余内容逐字节相同。唯一要记住的规则:包里 `.jpg` 对应的原始 MIME 是
-`image/jpeg`(不是 `image/jpg`),照这个规则拼回去就和原件一模一样。
+需要原文件时(例如要重跑 `pnpm data:ios`,它读 `figma/reference/<kit>/svg/`):
+
+```sh
+python3 figma/tools/svg-pack/restore.py             # 写回 figma/reference/<kit>/svg/
+python3 figma/tools/svg-pack/restore.py --dest /tmp/x   # 或还原到别处
+python3 figma/tools/svg-pack/restore.py --verify    # 只比对，不写盘
+```
+
+原理:把 `../img/<hash>.png` 内联回 `data:image/png;base64,...`,其余内容逐字节相同。
+唯一规则:包里 `.jpg` 对应的原始 MIME 是 `image/jpeg`(不是 `image/jpg`)。
+
+**注意**:本地已为省空间删掉 `figma/reference/<kit>/svg/`(281MB),
+跑 `pnpm data:ios` / `pnpm data:macos` 前先执行上面的 restore。
 
 ## 重新生成
 
@@ -87,7 +98,7 @@ python3 figma/tools/svg-pack/pack.py --out /tmp/x
 
 | 东西 | 位置 | 是否入库 |
 |---|---|---|
-| 原始 686 个 SVG | `figma/reference/<kit>/svg/` | 否(`reference/` 整体忽略) |
+| 原始 686 个 SVG(281MB) | 只在无损包里,本地已删;用 `restore.py` 还原 | — |
 | 无损压缩包 60MB | `figma/svg-packed/` | 待定 |
 | 打包/解包脚本 | `figma/tools/svg-pack/` | 是 |
 | web 画廊用的 SVG 副本 | `apps/*/public/svg/` | 否,由 `pnpm data:ios` 从原始重新生成 |
